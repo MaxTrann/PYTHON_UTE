@@ -37,8 +37,14 @@ def add_data(viewer):
         if not data["Age"].isdigit():
             messagebox.showerror("Lỗi", "Age phải là một số nguyên dương!")
             return
-        if data["Billing Amount"] and not data["Billing Amount"].replace(".", "", 1).isdigit():
-            messagebox.showerror("Lỗi", "Billing Amount phải là một số!")
+        
+
+        if int(data["Age"]) > 120:
+            messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 100!")
+            return
+            
+        if not data["Room Number"].isdigit():
+            messagebox.showerror("Lỗi", "Room Number phải là một số nguyên dương!")
             return
 
         # Thêm dữ liệu vào DataFrame
@@ -76,7 +82,7 @@ def delete_data(viewer):
     try:
         viewer.df = viewer.df.drop(index).reset_index(drop=True)
         viewer.load_data(viewer.current_page)
-        messagebox.showinfo("Thành công", "Xóa dữ liệu thành công!")
+        messagebox.showinfo("Thành công", f"Xóa {len(index)} dòng thành công!")
     except Exception as e:
         messagebox.showerror("Lỗi", f"Không thể xóa dữ liệu: {str(e)}")
 

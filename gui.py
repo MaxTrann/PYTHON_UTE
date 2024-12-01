@@ -117,6 +117,23 @@ class LargeDatasetViewer:
         self.tail_button = tk.Button(nav_frame, text="Trang cuối", command=lambda: self.load_data(-1))
         self.tail_button.pack(side=tk.LEFT, padx=5)
         
+    def show_sort_menu(self, col):
+        def sort_ascending():
+            self.df = sortData(self.df, col, greater=True)  # Gọi hàm sortData
+            self.load_data(self.current_page)  # Tải lại dữ liệu sau khi sắp xếp
+
+        def sort_descending():
+            self.df = sortData(self.df, col, greater=False)  # Gọi hàm sortData
+            self.load_data(self.current_page)  # Tải lại dữ liệu sau khi sắp xếp
+    
+        # Tạo menu thả xuống
+        sort_menu = tk.Menu(self.tree, tearoff=0)
+        sort_menu.add_command(label="Sắp xếp tăng dần", command=sort_ascending)
+        sort_menu.add_command(label="Sắp xếp giảm dần", command=sort_descending)
+
+        # Vị trí nhấp chuột
+        sort_menu.post(self.root.winfo_pointerx(), self.root.winfo_pointery())
+
     def load_data(self, page):
         if page < 0:
             page = (len(self.df) + self.page_size - 1) // self.page_size - 1

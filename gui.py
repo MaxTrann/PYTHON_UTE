@@ -113,6 +113,9 @@ class LargeDatasetViewer:
 
         self.next_button = tk.Button(nav_frame, text="Trang sau", command=lambda: self.load_data(self.current_page + 1))
         self.next_button.pack(side=tk.LEFT, padx=5)
+
+        self.tail_button = tk.Button(nav_frame, text="Trang cuối", command=lambda: self.load_data(-1))
+        self.tail_button.pack(side=tk.LEFT, padx=5)
         
     def load_data(self, page):
         if page < 0:

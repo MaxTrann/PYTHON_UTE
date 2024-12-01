@@ -147,12 +147,19 @@ class LargeDatasetViewer:
     def get_selected_index(self):
         # Implement logic to get selected index from Treeview
         # This is a placeholder implementation
+        # selected_item = self.tree.selection()
+        # if selected_item:
+        #     index= int(self.tree.index(selected_item[0]))
+        #     return index
+        # else:
+        #     return None
         selected_item = self.tree.selection()
         if selected_item:
-            index= int(self.tree.index(selected_item[0]))
-            return index
-        else:
-            return None
+            tree_index = int(self.tree.index(selected_item[0]))
+            df_index = self.current_page * self.page_size + tree_index
+            return df_index
+        return None
+
 
     def remove_empty_rows(self):
         # Placeholder implementation for removing empty rows

@@ -7,7 +7,7 @@ from crud_operations import add_data, update_data, delete_data, save_data, getDa
 class LargeDatasetViewer:
     def __init__(self, root):
         self.root = root
-        self.root.title("Large Dataset Viewer")
+        self.root.title("Phần mềm xử lý dữ liệu")
         self.root.geometry("2000x600")
         
         self.df = None
@@ -69,6 +69,17 @@ class LargeDatasetViewer:
         crud_menu.add_command(label="Xóa dữ liệu", command=lambda: delete_data(self))
         crud_menu.add_command(label="Lưu dữ liệu", command=lambda: save_data(self))
         
+        # Thêm menu Cleaning
+        cleaning_menu = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="Cleaning", menu=cleaning_menu)
+        cleaning_menu.add_command(label="Xóa hàng trống", command=self.remove_empty_rows)
+        cleaning_menu.add_command(label="Xóa cột trống", command=self.remove_empty_columns)
+
+        visual_menu = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="Visualize", menu=visual_menu)
+        visual_menu.add_command(label="Histogram", command=self.show_histogram)
+        visual_menu.add_command(label="Scatter Plot", command=self.show_scatter_plot)
+        
         # Bảng dữ liệu (Treeview) với thanh cuộn
         frame = tk.Frame(self.root)
         frame.pack(fill=tk.BOTH, expand=True)
@@ -119,10 +130,6 @@ class LargeDatasetViewer:
         self.next_button["state"] = tk.NORMAL if self.current_page < total_pages - 1 else tk.DISABLED
         self.page_label["text"] = f"Trang {self.current_page + 1}/{total_pages}"
 
-    def get_input_data(self):
-        # Implement logic to get input data from user
-        # This is a placeholder implementation
-        return []
 
     def get_selected_index(self):
         # Implement logic to get selected index from Treeview
@@ -131,6 +138,20 @@ class LargeDatasetViewer:
         if selected_item:
             return int(self.tree.index(selected_item))
         return None
+
+    def remove_empty_rows(self):
+        # Placeholder implementation for removing empty rows
+        pass
+
+    def remove_empty_columns(self):
+        # Placeholder implementation for removing empty columns
+        pass
+    def show_histogram(self):
+        # Placeholder implementation for showing histogram
+        pass
+    def show_scatter_plot(self):
+        # Placeholder implementation for showing scatter plot
+        pass
 
 if __name__ == "__main__":
     root = tk.Tk()

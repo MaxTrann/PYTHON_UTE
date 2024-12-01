@@ -21,10 +21,10 @@ class LargeDatasetViewer:
         self.welcome_frame = tk.Frame(self.root)
         self.welcome_frame.pack(fill=tk.BOTH, expand=True)
         
-        welcome_label = tk.Label(self.welcome_frame, text="Welcome to Large Dataset Viewer", font=("Arial", 24))
+        welcome_label = tk.Label(self.welcome_frame, text="Chào mừng bạn đến với phần mềm xử lý dữ liệu", font=("Arial", 24))
         welcome_label.pack(pady=20)
         
-        continue_button = tk.Button(self.welcome_frame, text="Continue", command=self.show_file_selection)
+        continue_button = tk.Button(self.welcome_frame, text="Tiếp tục", command=self.show_file_selection)
         continue_button.pack(pady=10)
         
     def show_file_selection(self):

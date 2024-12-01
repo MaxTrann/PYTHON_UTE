@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import pandas as pd
+from dataCleaning import sortData  # Import hàm sortData từ dataSorting.py
 
 from crud_operations import add_data, update_data, delete_data, save_data, getData
 
@@ -14,7 +15,7 @@ class LargeDatasetViewer:
         self.page_size = 100
         self.current_page = 0
         self.data_processor = None
-        
+        self.sort_reverse = {col: False for col in []}  # Dictionnary to store sort order for each column
         self.create_welcome_screen()
         
     def create_welcome_screen(self):
@@ -49,7 +50,7 @@ class LargeDatasetViewer:
                     # Xóa các cột cũ trong Treeview
                     self.tree["columns"] = list(self.df.columns)
                     for col in self.tree["columns"]:
-                        self.tree.heading(col, text=col)
+                        self.tree.heading(col, text=col, command=lambda _col=col: self.show_sort_menu(_col))
                         self.tree.column(col, width=100, stretch=True)  # Tự co giãn theo nội dung
                     self.load_data(0)  # Tải dữ liệu trang đầu tiên
                 else:
@@ -79,7 +80,7 @@ class LargeDatasetViewer:
         menu_bar.add_cascade(label="Visualize", menu=visual_menu)
         visual_menu.add_command(label="Histogram", command=self.show_histogram)
         visual_menu.add_command(label="Scatter Plot", command=self.show_scatter_plot)
-        
+
         # Bảng dữ liệu (Treeview) với thanh cuộn
         frame = tk.Frame(self.root)
         frame.pack(fill=tk.BOTH, expand=True)
@@ -109,7 +110,22 @@ class LargeDatasetViewer:
 
         self.next_button = tk.Button(nav_frame, text="Trang sau", command=lambda: self.load_data(self.current_page + 1))
         self.next_button.pack(side=tk.LEFT, padx=5)
-        
+    def show_sort_menu(self, col):
+        def sort_ascending():
+            self.df = sortData(self.df, col, greater=True)  # Gọi hàm sortData
+            self.load_data(self.current_page)  # Tải lại dữ liệu sau khi sắp xếp
+
+        def sort_descending():
+            self.df = sortData(self.df, col, greater=False)  # Gọi hàm sortData
+            self.load_data(self.current_page)  # Tải lại dữ liệu sau khi sắp xếp
+    
+        # Tạo menu thả xuống
+        sort_menu = tk.Menu(self.tree, tearoff=0)
+        sort_menu.add_command(label="Sắp xếp tăng dần", command=sort_ascending)
+        sort_menu.add_command(label="Sắp xếp giảm dần", command=sort_descending)
+
+        # Vị trí nhấp chuột
+        sort_menu.post(self.root.winfo_pointerx(), self.root.winfo_pointery())
     def load_data(self, page):
         self.current_page = page
         for row in self.tree.get_children():
@@ -152,7 +168,6 @@ class LargeDatasetViewer:
     def show_scatter_plot(self):
         # Placeholder implementation for showing scatter plot
         pass
-
 if __name__ == "__main__":
     root = tk.Tk()
     app = LargeDatasetViewer(root)

@@ -1,5 +1,6 @@
 import pandas as pd
 from tkinter import simpledialog, messagebox, filedialog
+import tkinter as tk
 
 def add_data(viewer):
     # Tạo cửa sổ nhập liệu
@@ -46,7 +47,7 @@ def add_data(viewer):
                 [viewer.df, pd.DataFrame([data])],
                 ignore_index=True
             )
-            viewer.load_data(viewer.current_page)
+            viewer.load_data(viewer.current_page)  # Move this line inside the try block
             input_window.destroy()
             messagebox.showinfo("Thành công", "Thêm dữ liệu thành công!")
         except Exception as e:
@@ -54,6 +55,7 @@ def add_data(viewer):
 
     # Nút Thêm
     tk.Button(input_window, text="Thêm", command=submit_data).grid(row=len(labels), column=0, columnspan=2, pady=10)
+    
 
 def update_data(viewer):
     # Implement logic to update data
@@ -66,11 +68,18 @@ def update_data(viewer):
             viewer.load_data(viewer.current_page)
 
 def delete_data(viewer):
-    # Implement logic to delete data
-    index = viewer.get_selected_index()
-    if index is not None:
-        viewer.df = viewer.df.drop(index).reset_index(drop=True)
+    selected_item = viewer.tree.selection()
+    if not selected_item:
+        messagebox.showwarning("Cảnh báo", "Hãy chọn một dòng để xóa!")
+        return
+
+    try:
+        index = viewer.tree.index(selected_item[0])
+        viewer.df = viewer.df.drop(viewer.df.index[index]).reset_index(drop=True)
         viewer.load_data(viewer.current_page)
+        messagebox.showinfo("Thành công", "Xóa dữ liệu thành công!")
+    except Exception as e:
+        messagebox.showerror("Lỗi", f"Không thể xóa dữ liệu: {str(e)}")
 
 def save_data(viewer):
     # Implement logic to save data

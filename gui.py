@@ -101,6 +101,9 @@ class LargeDatasetViewer:
         nav_frame = tk.Frame(self.root)
         nav_frame.pack(fill=tk.X)
 
+        self.head_button = tk.Button(nav_frame, text="Trang đầu", command=lambda: self.load_data(0))
+        self.head_button.pack(side=tk.LEFT, padx=5)
+
         self.prev_button = tk.Button(nav_frame, text="Trang trước", command=lambda: self.load_data(self.current_page - 1))
         self.prev_button.pack(side=tk.LEFT, padx=5)
 
@@ -109,8 +112,16 @@ class LargeDatasetViewer:
 
         self.next_button = tk.Button(nav_frame, text="Trang sau", command=lambda: self.load_data(self.current_page + 1))
         self.next_button.pack(side=tk.LEFT, padx=5)
+
+        self.tail_button = tk.Button(nav_frame, text="Trang cuối", command=lambda: self.load_data(-1))
+        self.tail_button.pack(side=tk.LEFT, padx=5)
         
     def load_data(self, page):
+        if page < 0:
+            page = (len(self.df) + self.page_size - 1) // self.page_size - 1
+        elif page >= (len(self.df) + self.page_size - 1) // self.page_size:
+            page = 0
+
         self.current_page = page
         for row in self.tree.get_children():
             self.tree.delete(row)
@@ -128,16 +139,19 @@ class LargeDatasetViewer:
         total_pages = (len(self.df) + self.page_size - 1) // self.page_size
         self.prev_button["state"] = tk.NORMAL if self.current_page > 0 else tk.DISABLED
         self.next_button["state"] = tk.NORMAL if self.current_page < total_pages - 1 else tk.DISABLED
+        self.head_button["state"] = tk.NORMAL if self.current_page > 0 else tk.DISABLED
+        self.tail_button["state"] = tk.NORMAL if self.current_page < total_pages - 1 else tk.DISABLED
         self.page_label["text"] = f"Trang {self.current_page + 1}/{total_pages}"
-
 
     def get_selected_index(self):
         # Implement logic to get selected index from Treeview
         # This is a placeholder implementation
         selected_item = self.tree.selection()
         if selected_item:
-            return int(self.tree.index(selected_item))
-        return None
+            index= int(self.tree.index(selected_item[0]))
+            return index
+        else:
+            return None
 
     def remove_empty_rows(self):
         # Placeholder implementation for removing empty rows

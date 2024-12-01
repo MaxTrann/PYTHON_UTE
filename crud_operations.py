@@ -2,11 +2,58 @@ import pandas as pd
 from tkinter import simpledialog, messagebox, filedialog
 
 def add_data(viewer):
-    # Implement logic to add data
-    new_data = viewer.get_input_data()
-    if new_data:
-        viewer.df = viewer.df.append(new_data, ignore_index=True)
-        viewer.load_data(viewer.current_page)
+    # Tạo cửa sổ nhập liệu
+    input_window = tk.Toplevel(viewer.root)
+    input_window.title("Thêm dữ liệu")
+
+    # Danh sách các trường nhập liệu
+    labels = [
+        "Name", "Age", "Gender", "Blood Type", "Medical Condition",
+        "Date of Admission", "Doctor", "Hospital", "Insurance Provider",
+        "Billing Amount", "Room Number", "Admission Type",
+        "Discharge Date", "Medication", "Test Results"
+    ]
+    entries = {}
+
+    # Tạo các nhãn và ô nhập liệu
+    for i, label in enumerate(labels):
+        tk.Label(input_window, text=f"{label}:").grid(row=i, column=0, padx=10, pady=5)
+        entry = tk.Entry(input_window)
+        entry.grid(row=i, column=1, padx=10, pady=5)
+        entries[label] = entry
+
+    # Hàm xử lý khi nhấn nút Thêm
+    def submit_data():
+        # Lấy dữ liệu từ các trường nhập liệu
+        data = {label: entry.get().strip() for label, entry in entries.items()}
+
+        # Kiểm tra đầu vào bắt buộc
+        if not data["Name"] or not data["Age"]:
+            messagebox.showerror("Lỗi", "Các trường Name và Age không được để trống!")
+            return
+
+        # Kiểm tra định dạng số cho Age và Billing Amount
+        if not data["Age"].isdigit():
+            messagebox.showerror("Lỗi", "Age phải là một số nguyên dương!")
+            return
+        if data["Billing Amount"] and not data["Billing Amount"].replace(".", "", 1).isdigit():
+            messagebox.showerror("Lỗi", "Billing Amount phải là một số!")
+            return
+
+        # Thêm dữ liệu vào DataFrame
+        try:
+            viewer.df = pd.concat(
+                [viewer.df, pd.DataFrame([data])],
+                ignore_index=True
+            )
+            viewer.load_data(viewer.current_page)
+            input_window.destroy()
+            messagebox.showinfo("Thành công", "Thêm dữ liệu thành công!")
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không thể thêm dữ liệu: {str(e)}")
+
+    # Nút Thêm
+    tk.Button(input_window, text="Thêm", command=submit_data).grid(row=len(labels), column=0, columnspan=2, pady=10)
 
 def update_data(viewer):
     # Implement logic to update data

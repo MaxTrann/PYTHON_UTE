@@ -95,11 +95,11 @@ class dataProcessing:
             
     
     def saveData(self):
-        # <Lưu dữ liệu hiện tại vào lại file csv>
-        try:
-            self.data.to_csv(self.filePath)
-            print("Dữ liệu đã được lưu thành công!")
-        except Exception as e:
-            print(f"File {self.filePath} gặp lỗi {e}")
+            # <Lưu dữ liệu hiện tại vào lại file csv>
+            try:
+                self.data.to_csv(self.filePath, index=False)
+                print("Dữ liệu đã được lưu thành công!")
+            except Exception as e:
+                print(f"File {self.filePath} gặp lỗi {e}")
                 
     

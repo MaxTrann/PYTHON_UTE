@@ -68,18 +68,18 @@ def update_data(viewer):
             viewer.load_data(viewer.current_page)
 
 def delete_data(viewer):
-    selected_item = viewer.tree.selection()
-    if not selected_item:
+    index = viewer.get_selected_index()
+    if index is None:
         messagebox.showwarning("Cảnh báo", "Hãy chọn một dòng để xóa!")
         return
 
     try:
-        index = viewer.tree.index(selected_item[0])
-        viewer.df = viewer.df.drop(viewer.df.index[index]).reset_index(drop=True)
+        viewer.df = viewer.df.drop(index).reset_index(drop=True)
         viewer.load_data(viewer.current_page)
         messagebox.showinfo("Thành công", "Xóa dữ liệu thành công!")
     except Exception as e:
         messagebox.showerror("Lỗi", f"Không thể xóa dữ liệu: {str(e)}")
+
 
 def save_data(viewer):
     # Implement logic to save data
@@ -93,9 +93,7 @@ def getData(filePath):
     try:
         data = pd.read_csv(filePath)
         if data.empty:
-            print("File csv không tồn tại dữ liệu!")
             return None
         return data
     except Exception as e:
-        print(f"File {filePath} gặp lỗi {e}")
         return None

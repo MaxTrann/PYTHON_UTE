@@ -95,6 +95,21 @@ def update_data(viewer):
         # Cập nhật dữ liệu
         for key, value in new_data.items():
             viewer.df.at[index, key] = value
+    
+
+        # Kiểm tra định dạng số cho Age và Billing Amount
+        if not new_data["Age"].isdigit():
+            messagebox.showerror("Lỗi", "Age phải là một số nguyên dương!")
+            return
+        
+
+        if int(new_data["Age"]) > 120:
+            messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 100!")
+            return
+            
+        if not new_data["Room Number"].isdigit():
+            messagebox.showerror("Lỗi", "Room Number phải là một số nguyên dương!")
+            return
         
         viewer.load_data(viewer.current_page)
         update_window.destroy()

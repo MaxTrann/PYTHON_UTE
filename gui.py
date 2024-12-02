@@ -177,10 +177,14 @@ class LargeDatasetViewer:
 
 
     def remove_empty_rows(self):
-        # Placeholder implementation for removing empty rows
-        pass
+        if self.df is not None:
+            self.df = self.df.dropna(how="any")  # Xóa dòng có bất kỳ giá trị NaN nào
+            self.load_data(self.current_page)  # Tải lại dữ liệu sau khi làm sạch
+            messagebox.showinfo("Thông báo", "Đã xóa các dòng chứa dữ liệu trống.")
+        else:
+            messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
 
-    def remove_empty_columns(self):
+    def remove_empty_data_columns(self):
         # Placeholder implementation for removing empty columns
         pass
     def show_histogram(self):

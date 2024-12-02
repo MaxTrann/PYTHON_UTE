@@ -66,12 +66,41 @@ def add_data(viewer):
 def update_data(viewer):
     # Implement logic to update data
     index = viewer.get_selected_index()
-    if index is not None:
-        new_data = viewer.get_input_data()
-        if new_data:
-            for key, value in new_data.items():
-                viewer.df.at[index, key] = value
-            viewer.load_data(viewer.current_page)
+    if index is None or len(index) != 1:
+        messagebox.showwarning("Cảnh báo", "Chỉ được chọn 1 dòng để cập nhật!")
+        return
+    index = index[0]
+
+    
+    # Tạo cửa sổ
+    update_window = tk.Toplevel(viewer.root)
+    update_window.title("Cập nhật dữ liệu")
+    
+    # Danh sách các cột dữ liệu
+    labels = viewer.df.columns
+    entries = {}
+    
+    # Hiện thị các ô và dữ liệu đã được nhập trước đó
+    for i, label in enumerate(labels):
+        tk.Label(update_window, text=f"{label}:").grid(row=i, column=0, padx=10, pady=5)
+        entry = tk.Entry(update_window)
+        entry.insert(0, str(viewer.df.at[index, label]))
+        entry.grid(row=i, column=1,padx=10,pady=5)
+        entries[label] = entry
+        
+    # Xử lí
+    def submit_update():
+        new_data = {label: entry.get().strip() for label, entry in entries.items()}
+        
+        # Cập nhật dữ liệu
+        for key, value in new_data.items():
+            viewer.df.at[index, key] = value
+        
+        viewer.load_data(viewer.current_page)
+        update_window.destroy()
+        
+    # Nút Cập nhật
+    tk.Button(update_window, text="Cập nhật", command=submit_update).grid(row=len(labels), column=0, columnspan=2, pady=10)
 
 def delete_data(viewer):
     index = viewer.get_selected_index()

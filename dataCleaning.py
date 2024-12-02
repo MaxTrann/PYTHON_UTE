@@ -19,7 +19,9 @@ def searchData(data,col,keyword):
 def deleteMissingDataRow(data):
     return data.dropna()
 
-def deleteOutliers(data, col):
+def deleteOutliers(data, col, default_values):
     if col not in data.columns:
         raise KeyError(f"Cột '{col}' không tồn tại trong dữ liệu!")
     
+    filtered_data = data[data[col].isin(default_values)]
+    return filtered_data

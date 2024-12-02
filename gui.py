@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import pandas as pd
-from dataCleaning import sortData  # Import hàm sortData từ dataSorting.py
+from dataCleaning import sortData, deleteOutliers, deleteMissingDataRow  # Import hàm sortData từ dataSorting.py
 
 from crud_operations import add_data, update_data, delete_data, save_data, getData
 
@@ -73,8 +73,9 @@ class LargeDatasetViewer:
         # Thêm menu Cleaning
         cleaning_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Cleaning", menu=cleaning_menu)
-        cleaning_menu.add_command(label="Xóa hàng trống", command=self.remove_empty_rows)
+        cleaning_menu.add_command(label="Xóa hàng trống", command=self.remove_empty_data_rows)
         cleaning_menu.add_command(label="Xóa cột trống", command=self.remove_empty_columns)
+        # cleaning_menu.add_command(label="Xoá giá trị ngoại lai", command=lambda: delete_outliers_menu(self))
 
         visual_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Visualize", menu=visual_menu)
@@ -175,8 +176,7 @@ class LargeDatasetViewer:
         else:
             return None
 
-
-    def remove_empty_rows(self):
+    def remove_empty_data_rows(self):
         if self.df is not None:
             self.df = self.df.dropna(how="any")  # Xóa dòng có bất kỳ giá trị NaN nào
             self.load_data(self.current_page)  # Tải lại dữ liệu sau khi làm sạch
@@ -184,9 +184,31 @@ class LargeDatasetViewer:
         else:
             messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
 
-    def remove_empty_data_columns(self):
-        # Placeholder implementation for removing empty columns
-        pass
+    def remove_empty_columns(self):
+        if self.df is not None:
+            self.df = self.df.dropna(axis=1, how="all")  # Xóa các cột chứa toàn bộ là NaN
+            self.load_data(self.current_page)  # Tải lại dữ liệu sau khi làm sạch
+            messagebox.showinfo("Thông báo", "Đã xóa các cột trống.")
+        else:
+            messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
+
+    def delete_outliers_menu(self, col, valid_values):
+        # Xóa giá trị ngoại lai
+        def delete_outliers():
+            if self.df is not None:
+                if col in self.df.columns:
+                    self.df = deleteOutliers(self.df, col, valid_values)
+                    self.load_data(self.current_page)  # Tải lại dữ liệu sau khi làm sạch
+                    messagebox.showinfo("Thông báo", f"Đã xóa các dòng có giá trị ngoại lệ ở cột {col}.")
+                else:
+                    messagebox.showerror("Lỗi", f"Cột '{col}' không tồn tại trong dữ liệu.")
+            else:
+                messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
+        
+        delete_menu = tk.Menu(self.tree, tearoff=0)
+        delete_menu.add_command(label=f"Xóa dữ liệu ngoại lai trong {col}", command=delete_outliers)
+        delete_menu.post(self.root.winfo_pointerx(), self.root.winfo_pointery())
+
     def show_histogram(self):
         # Placeholder implementation for showing histogram
         pass

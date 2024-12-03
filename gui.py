@@ -178,8 +178,8 @@ class LargeDatasetViewer:
 
     def remove_empty_data_rows(self):
         if self.df is not None:
-            self.df = self.df.dropna(how="any")  # Xóa dòng có bất kỳ giá trị NaN nào
-            self.load_data(self.current_page)  # Tải lại dữ liệu sau khi làm sạch
+            self.df = self.df.dropna(axis=0)  # Xóa dòng có bất kỳ giá trị NaN nào
+            self.load_data(self.current_page)  # Cập nhật lại dữ liệu
             messagebox.showinfo("Thông báo", "Đã xóa các dòng chứa dữ liệu trống.")
         else:
             messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
@@ -191,23 +191,6 @@ class LargeDatasetViewer:
             messagebox.showinfo("Thông báo", "Đã xóa các cột trống.")
         else:
             messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
-
-    def delete_outliers_menu(self, col, valid_values):
-        # Xóa giá trị ngoại lai
-        def delete_outliers():
-            if self.df is not None:
-                if col in self.df.columns:
-                    self.df = deleteOutliers(self.df, col, valid_values)
-                    self.load_data(self.current_page)  # Tải lại dữ liệu sau khi làm sạch
-                    messagebox.showinfo("Thông báo", f"Đã xóa các dòng có giá trị ngoại lệ ở cột {col}.")
-                else:
-                    messagebox.showerror("Lỗi", f"Cột '{col}' không tồn tại trong dữ liệu.")
-            else:
-                messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
-        
-        delete_menu = tk.Menu(self.tree, tearoff=0)
-        delete_menu.add_command(label=f"Xóa dữ liệu ngoại lai trong {col}", command=delete_outliers)
-        delete_menu.post(self.root.winfo_pointerx(), self.root.winfo_pointery())
 
     def show_histogram(self):
         # Placeholder implementation for showing histogram

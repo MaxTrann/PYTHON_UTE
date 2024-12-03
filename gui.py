@@ -12,7 +12,7 @@ class LargeDatasetViewer:
         self.root.geometry("2000x600")
         
         self.df = None
-        self.page_size = 100
+        self.page_size = 50
         self.current_page = 0
         self.data_processor = None
         self.sort_reverse = {col: False for col in []}  # Dictionnary to store sort order for each column

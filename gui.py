@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import pandas as pd
-from dataCleaning import sortData, search_data#, deleteOutliers, deleteMissingDataRow  # Import hàm sortData từ dataSorting.py
+from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column#, deleteOutliers, deleteMissingDataRow  # Import hàm sortData từ dataSorting.py
 
 from crud_operations import add_data, update_data, delete_data, save_data, getData
 
@@ -78,7 +78,8 @@ class LargeDatasetViewer:
         cleaning_menu.add_command(label="Xóa cột trống", command=self.remove_empty_columns)
         # cleaning_menu.add_command(label="Xoá giá trị ngoại lai", command=lambda: delete_outliers_menu(self))
         cleaning_menu.add_command(label="Tìm kiếm", command=self.create_search_widget)  # Thêm mục tìm kiếm vào menu Cleaning
-
+        cleaning_menu.add_command(label="Điền dữ liệu còn thiếu", command=lambda: fill_missing_data_prompt(self))
+        cleaning_menu.add_command(label="Chuẩn hoá dữ liệu", command=self.show_normalize_menu)
 
         visual_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Visualize", menu=visual_menu)
@@ -278,7 +279,52 @@ class LargeDatasetViewer:
             return lines
         else:
             return None
-
+    def fill_missing_data(self, col_name, value, data_type):
+    #Điền giá trị còn thiếu vào cột được chỉ định.
+        if col_name in self.df.columns:
+            missing_cnt = self.df[col_name].isna().sum()
+            
+            if missing_cnt > 0:
+                # Điền dữ liệu tùy loại chuỗi hoặc số
+                self.df[col_name].fillna(value, inplace=True)
+                messagebox.showinfo("Thông báo", f"Đã điền {missing_cnt} giá trị vào cột {col_name} với giá trị {value}.")
+                self.load_data(self.current_page)  # Cập nhật Treeview
+            else:
+                # Báo lỗi nếu cột không có giá trị bị thiếu
+                messagebox.showinfo("Thông báo", f"Cột {col_name} không có giá trị bị thiếu.")
+        else:
+            # Báo lỗi nếu cột không tồn tại
+            messagebox.showerror("Lỗi", f"Cột {col_name} không tồn tại.")
+    def show_normalize_menu(self):
+        """Hiển thị menu chọn cột để chuẩn hóa."""
+        # Tạo popup menu để hiển thị các cột
+        popup_menu = tk.Menu(self.root, tearoff=0)
+        
+        columns_to_normalize = [
+            "Name", "Gender", "Blood Type", "Medical Condition", 
+            "Date of Admission", "Doctor", "Hospital", "Insurance Provider",
+            "Billing Amount", "Admission Type", 
+            "Discharge Date", "Medication", "Test Results"
+        ]
+        
+        for col in columns_to_normalize:
+            popup_menu.add_command(
+                label=f"Chuẩn hóa {col}",
+                command=lambda col=col: self.normalize_column(col)
+            )
+        
+        # Hiển thị popup menu tại vị trí con trỏ chuột
+        popup_menu.post(self.root.winfo_pointerx(), self.root.winfo_pointery())
+    def normalize_column(self, col):
+        """Chuẩn hóa dữ liệu trong cột được chọn."""
+        try:
+            normalize_column(self.df, col)
+            messagebox.showinfo("Thông báo", f"Cột {col} đã được chuẩn hóa.")
+            self.load_data(self.current_page)  # Cập nhật Treeview
+        except ValueError as e:
+            messagebox.showerror("Lỗi", str(e))
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không thể chuẩn hóa cột {col}: {e}")
     def remove_empty_data_rows(self):
         if self.df is not None:
             self.df = self.df.dropna(axis=0)  # Xóa dòng có bất kỳ giá trị NaN nào

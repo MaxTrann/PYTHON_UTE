@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import pandas as pd
-from dataCleaning import sortData, deleteOutliers, deleteMissingDataRow  # Import hàm sortData từ dataSorting.py
+from dataCleaning import sortData, search_data#, deleteOutliers, deleteMissingDataRow  # Import hàm sortData từ dataSorting.py
 
 from crud_operations import add_data, update_data, delete_data, save_data, getData
 
@@ -16,6 +16,7 @@ class LargeDatasetViewer:
         self.current_page = 0
         self.data_processor = None
         self.sort_reverse = {col: False for col in []}  # Dictionnary to store sort order for each column
+        self.search_conditions = []  # Danh sách lưu các điều kiện lọc
         self.create_welcome_screen()
         
     def create_welcome_screen(self):
@@ -76,6 +77,8 @@ class LargeDatasetViewer:
         cleaning_menu.add_command(label="Xóa hàng trống", command=self.remove_empty_data_rows)
         cleaning_menu.add_command(label="Xóa cột trống", command=self.remove_empty_columns)
         # cleaning_menu.add_command(label="Xoá giá trị ngoại lai", command=lambda: delete_outliers_menu(self))
+        cleaning_menu.add_command(label="Tìm kiếm", command=self.create_search_widget)  # Thêm mục tìm kiếm vào menu Cleaning
+
 
         visual_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Visualize", menu=visual_menu)
@@ -134,6 +137,106 @@ class LargeDatasetViewer:
 
         # Vị trí nhấp chuột
         sort_menu.post(self.root.winfo_pointerx(), self.root.winfo_pointery())
+
+    def create_search_widget(self):
+        # Tạo phần tìm kiếm
+        search_frame = tk.Frame(self.root)
+        search_frame.pack(fill=tk.X, padx=10, pady=10)
+
+        search_label = tk.Label(search_frame, text="Nhập từ khóa tìm kiếm:")
+        search_label.pack(side=tk.LEFT, padx=5)
+
+        self.search_entry = tk.Entry(search_frame, width=40)
+        self.search_entry.pack(side=tk.LEFT, padx=5)
+
+        column_label = tk.Label(search_frame, text="Chọn cột:")
+        column_label.pack(side=tk.LEFT, padx=5)
+
+        self.column_combobox = ttk.Combobox(search_frame, values=list(self.df.columns), state="readonly")
+        self.column_combobox.pack(side=tk.LEFT, padx=5)
+        self.column_combobox.set("Chọn")  # Giá trị mặc định
+
+        add_condition_button = tk.Button(search_frame, text="Thêm điều kiện", command=self.add_search_condition)
+        add_condition_button.pack(side=tk.LEFT, padx=5)
+
+        search_button = tk.Button(search_frame, text="Tìm kiếm", command=lambda: search_data(self))
+        search_button.pack(side=tk.LEFT, padx=5)
+        # Bảng hiển thị các điều kiện đã thêm
+        self.condition_label = tk.Label(self.root, text="Các điều kiện tìm kiếm đã thêm:")
+        self.condition_label.pack(pady=10)
+        self.condition_listbox = tk.Listbox(self.root, height=5, width=50)
+        self.condition_listbox.pack(pady=5)
+        # Thêm nút Exit để thoát khỏi chế độ tìm kiếm
+        exit_button = tk.Button(search_frame, text="Thoát", command=self.exit_search)
+        exit_button.pack(side=tk.LEFT, padx=5)
+    # def exit_search(self):
+    #     """Tắt giao diện tìm kiếm và quay lại giao diện chính."""
+    #     # Xóa tất cả các widget liên quan đến tìm kiếm
+    #     if hasattr(self, 'search_widgets'):  # Kiểm tra nếu danh sách widget tồn tại
+    #         for widget in self.search_widgets:
+    #             widget.destroy()  # Xóa từng widget
+    #         del self.search_widgets  # Xóa danh sách để tránh lỗi
+        
+    #     # Hiển thị lại các widget chính (giao diện chính sau khi chọn file)
+    #     self.create_widgets()
+
+    def add_search_condition(self):
+        # Lấy key và cột từ người dùng
+        key = self.search_entry.get()
+        column = self.column_combobox.get()
+
+        if column == "Chọn":
+            messagebox.showerror("Error", f"Bạn chưa chọn cột để tìm kiếm")
+            return
+
+        if key == "":
+            messagebox.showerror("Error", "Bạn phải nhập giá trị tìm kiếm!")
+            return
+
+        # Thêm điều kiện vào danh sách điều kiện
+        condition = f"{column}: {key}"
+        self.search_conditions.append((column, key))
+        self.condition_listbox.insert(tk.END, condition)
+        self.search_entry.delete(0, tk.END)  # Xóa ô nhập sau khi thêm
+
+    def show_search_results(self, filtered_df):
+        # Kiểm tra nếu DataFrame không có dữ liệu
+        if filtered_df.empty:
+            messagebox.showinfo("Không có kết quả", "Không tìm thấy kết quả nào.")
+            return
+        
+        # Tạo cửa sổ mới để hiển thị kết quả tìm kiếm
+        search_window = tk.Toplevel(self.root)
+        search_window.title("Kết quả tìm kiếm")
+        search_window.geometry("1000x400")
+
+        # Tạo Treeview để hiển thị dữ liệu tìm kiếm dưới dạng bảng
+        tree = ttk.Treeview(search_window, show="headings")
+        tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Thiết lập các cột của Treeview
+        tree["columns"] = list(filtered_df.columns)
+        for col in tree["columns"]:
+            tree.heading(col, text=col)
+            tree.column(col, width=100, stretch=True)
+
+        # Thanh cuộn dọc
+        scrollbar_y = ttk.Scrollbar(search_window, orient=tk.VERTICAL, command=tree.yview)
+        scrollbar_y.pack(side=tk.RIGHT, fill=tk.Y)
+        tree.configure(yscroll=scrollbar_y.set)
+
+        # Thanh cuộn ngang
+        scrollbar_x = ttk.Scrollbar(search_window, orient=tk.HORIZONTAL, command=tree.xview)
+        scrollbar_x.pack(fill=tk.X)
+        tree.configure(xscroll=scrollbar_x.set)
+
+        # Hiển thị số lượng cột tìm được
+        count_label = tk.Label(search_window, text=f"Số lượng cột tìm được: {len(filtered_df.columns)}")
+        count_label.pack(pady=5)
+
+        # Thêm dữ liệu vào Treeview
+        for row in filtered_df.values:
+            tree.insert("", tk.END, values=list(row))
 
     def load_data(self, page):
         if page < 0:

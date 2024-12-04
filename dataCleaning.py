@@ -1,4 +1,5 @@
 import pandas as pd
+from tkinter import ttk, filedialog, messagebox
 
 def loadData(Data_File):
     return pd.read_csv(Data_File)
@@ -8,13 +9,31 @@ def sortData(data, col, greater=True):
         raise KeyError(f"Cột '{col}' không tồn tại trong dữ liệu!")
     return data.sort_values(by=col, ascending=greater)
 
-def searchData(data,col,keyword):
-    if col in data.columns:
-        ans = data[data[col].astype(str).str.contains(keyword, case=True, na=False)]
-        print("Kết quả tìm kiếm: ")
-        print(ans)
-    else:
-        print(f"{col} không có trong dữ liệu!")
+def search_data(viewer):
+        # Duyệt qua tất cả các điều kiện và áp dụng chúng lên DataFrame
+        filtered_df = viewer.df
+        conditions_dict = {}
+
+        # Nhóm các điều kiện theo cột
+        for column, key in viewer.search_conditions:
+            if column not in conditions_dict:
+                conditions_dict[column] = []
+            conditions_dict[column].append(key)
+
+        # Lọc dữ liệu theo từng cột và điều kiện
+        for column, keys in conditions_dict.items():
+            # Tạo điều kiện cho mỗi giá trị trong cột
+            condition = filtered_df[column].astype(str).str.lower().isin([key.lower() for key in keys])
+
+            # Áp dụng điều kiện lọc lên DataFrame
+            filtered_df = filtered_df[condition]
+
+        # Hiển thị dữ liệu tìm kiếm trong cửa sổ mới
+        viewer.show_search_results(filtered_df)
+
+        # Xóa điều kiện sau khi tìm kiếm
+        viewer.search_conditions = []
+        viewer.condition_listbox.delete(0, ttk.END)
 
 def deleteOutliers(data, col, default_values):
     if col not in data.columns:

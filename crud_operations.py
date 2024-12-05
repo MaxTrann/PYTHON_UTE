@@ -33,14 +33,14 @@ def add_data(viewer):
             messagebox.showerror("Lỗi", "Các trường Name và Age không được để trống!")
             return
 
-        # Kiểm tra định dạng số cho Age và Billing Amount
+        # Kiểm tra định dạng số cho Age
         if not data["Age"].isdigit():
             messagebox.showerror("Lỗi", "Age phải là một số nguyên dương!")
             return
         
 
         if int(data["Age"]) > 120:
-            messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 100!")
+            messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 120!")
             return
             
         if not data["Room Number"].isdigit():

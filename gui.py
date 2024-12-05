@@ -341,40 +341,6 @@ class LargeDatasetViewer:
         else:
             messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
 
-    def delete_outliers_prompt(self):
-        # Hỏi người dùng nhập tên cột
-        col_name = simpledialog.askstring("Nhập tên cột", "Vui lòng nhập tên cột:")
-        if col_name not in self.df.columns:
-            messagebox.showerror("Lỗi", f"Cột '{col_name}' không tồn tại trong dữ liệu.")
-            return
-
-        # Hỏi người dùng danh sách giá trị hợp lệ
-        valid_values = simpledialog.askstring(
-            "Nhập giá trị hợp lệ",
-            "Vui lòng nhập các giá trị hợp lệ (cách nhau bằng dấu phẩy):"
-        )
-        if not valid_values:
-            messagebox.showerror("Lỗi", "Bạn chưa nhập giá trị hợp lệ.")
-            return
-
-        # Chuyển danh sách giá trị hợp lệ thành tập hợp
-        valid_values = set(value.strip() for value in valid_values.split(","))
-        
-        # Xóa các dòng chứa giá trị ngoại lai
-        try:
-            before_count = len(self.df)
-            self.df = self.df[self.df[col_name].isin(valid_values)]
-            after_count = len(self.df)
-
-            # Thông báo kết quả
-            messagebox.showinfo(
-                "Thông báo",
-                f"Đã xóa {before_count - after_count} dòng chứa giá trị ngoại lai trong cột '{col_name}'."
-            )
-            self.load_data(self.current_page)  # Cập nhật TreeView
-        except Exception as e:
-            messagebox.showerror("Lỗi", f"Không thể xử lý giá trị ngoại lai: {str(e)}")
-
     def remove_outliers(self):
         # Lấy danh sách cột
         columns = self.df.columns.tolist()

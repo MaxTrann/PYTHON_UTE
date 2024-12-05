@@ -39,12 +39,6 @@ def search_data(viewer):
         viewer.search_conditions = []
         viewer.condition_listbox.delete(0, END)
 
-def deleteOutliers(data, col, default_values):
-    if col not in data.columns:
-        raise KeyError(f"Cột '{col}' không tồn tại trong dữ liệu!")
-    
-    filtered_data = data[data[col].isin(default_values)]
-    return filtered_data
 def fill_missing_data_prompt(viewer):
     """Hiển thị giao diện điền dữ liệu còn thiếu với ràng buộc nhập liệu."""
     
@@ -222,23 +216,6 @@ def normalize_column(df, col):
     else:
         raise ValueError(f"Cột {col} không được hỗ trợ chuẩn hóa.")
 
-# def delete_outliers_menu (data, col, valid_values):
-#     # Xóa giá trị ngoại lai
-#     def delete_outliers():
-#         if self.df is not None:
-#             if col in self.df.columns:
-#                 self.df = deleteOutliers(self.df, col, valid_values)
-#                 self.load_data(self.current_page)  # Tải lại dữ liệu sau khi làm sạch
-#                 messagebox.showinfo("Thông báo", f"Đã xóa các dòng có giá trị ngoại lệ ở cột {col}.")
-#             else:
-#                 messagebox.showerror("Lỗi", f"Cột '{col}' không tồn tại trong dữ liệu.")
-#         else:
-#             messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
-    
-#     delete_menu = tk.Menu(self.tree, tearoff=0)
-#     delete_menu.add_command(label=f"Xóa dữ liệu ngoại lai trong {col}", command=delete_outliers)
-#     delete_menu.post(self.root.winfo_pointerx(), self.root.winfo_pointery())
-
 # def check_name():
 #     # check chuỗi tên chỉ được chứa chữ và khoảng trắng
 
@@ -254,7 +231,7 @@ def is_valid_value(col, value):
         "Gender": {"Male", "Female", "male", "female"},
         "Blood Type": {"A+", "B+", "O+", "AB+", "AB-", "A-", "O-", "B-", "a+", "b+", "o+", "ab+", "ab-", "a-", "b-", "o-"},
         "Medical Condition": {"Cancer", "Diabetes", "Asthma", "Arthritis", "Hypertension", "Obesity", "cancer", "diabetes", "asthma", "arthritis", "aypertension", "obesity"},
-        "Insurance Provider": {"Cigna", "Medicare", "Blue Cross", "UnitedHealthcare", "Aetna", "cigna", "medicare", "blue Cross", "unitedhealthcare", "aetna"},
+        " Provider": {"Cigna", "Medicare", "Blue Cross", "UnitedHealthcare", "Aetna", "cigna", "medicare", "blue Cross", "unitedhealthcare", "aetna"},
         "Room Number": lambda v: v.isdigit() and 0 < int(v) < 1000,
         "Admission Type": {"Elective", "Emergency", "Urgent", "elective", "emergency", "urgent"},
         "Medication": {"Penicillin", "Ibuprofen", "Aspirin", "Lipitor", "Paracetamol", "penicillin", "ibuprofen", "aspirin", "lipitor", "paracetamol"},

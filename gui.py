@@ -141,45 +141,45 @@ class LargeDatasetViewer:
 
     def create_search_widget(self):
         # Tạo phần tìm kiếm
-        search_frame = tk.Frame(self.root)
-        search_frame.pack(fill=tk.X, padx=10, pady=10)
+        self.search_frame = tk.Frame(self.root)
+        self.search_frame.pack(fill=tk.X, padx=10, pady=10)
 
-        search_label = tk.Label(search_frame, text="Nhập từ khóa tìm kiếm:")
+        search_label = tk.Label(self.search_frame, text="Nhập từ khóa tìm kiếm:")
         search_label.pack(side=tk.LEFT, padx=5)
 
-        self.search_entry = tk.Entry(search_frame, width=40)
+        self.search_entry = tk.Entry(self.search_frame, width=40)
         self.search_entry.pack(side=tk.LEFT, padx=5)
 
-        column_label = tk.Label(search_frame, text="Chọn cột:")
+        column_label = tk.Label(self.search_frame, text="Chọn cột:")
         column_label.pack(side=tk.LEFT, padx=5)
 
-        self.column_combobox = ttk.Combobox(search_frame, values=list(self.df.columns), state="readonly")
+        self.column_combobox = ttk.Combobox(self.search_frame, values=list(self.df.columns), state="readonly")
         self.column_combobox.pack(side=tk.LEFT, padx=5)
         self.column_combobox.set("Chọn")  # Giá trị mặc định
 
-        add_condition_button = tk.Button(search_frame, text="Thêm điều kiện", command=self.add_search_condition)
+        add_condition_button = tk.Button(self.search_frame, text="Thêm điều kiện", command=self.add_search_condition)
         add_condition_button.pack(side=tk.LEFT, padx=5)
 
-        search_button = tk.Button(search_frame, text="Tìm kiếm", command=lambda: search_data(self))
+        search_button = tk.Button(self.search_frame, text="Tìm kiếm", command=lambda: search_data(self))
         search_button.pack(side=tk.LEFT, padx=5)
+
+        exit_button = tk.Button(self.search_frame, text="Thoát", command=self.exit_search)
+        exit_button.pack(side=tk.LEFT, padx=5)
+
         # Bảng hiển thị các điều kiện đã thêm
         self.condition_label = tk.Label(self.root, text="Các điều kiện tìm kiếm đã thêm:")
         self.condition_label.pack(pady=10)
         self.condition_listbox = tk.Listbox(self.root, height=5, width=50)
         self.condition_listbox.pack(pady=5)
-        # Thêm nút Exit để thoát khỏi chế độ tìm kiếm
-        exit_button = tk.Button(search_frame, text="Thoát", command=self.exit_search)
-        exit_button.pack(side=tk.LEFT, padx=5)
-    # def exit_search(self):
-    #     """Tắt giao diện tìm kiếm và quay lại giao diện chính."""
-    #     # Xóa tất cả các widget liên quan đến tìm kiếm
-    #     if hasattr(self, 'search_widgets'):  # Kiểm tra nếu danh sách widget tồn tại
-    #         for widget in self.search_widgets:
-    #             widget.destroy()  # Xóa từng widget
-    #         del self.search_widgets  # Xóa danh sách để tránh lỗi
-        
-    #     # Hiển thị lại các widget chính (giao diện chính sau khi chọn file)
-    #     self.create_widgets()
+
+    def exit_search(self):
+        """Tắt giao diện tìm kiếm và quay lại giao diện chính."""
+        # Xóa tất cả các widget liên quan đến tìm kiếm
+        self.search_frame.destroy()
+        self.condition_label.destroy()
+        self.condition_listbox.destroy()
+        # Hiển thị lại dữ liệu chính
+        self.load_data(self.current_page)
 
     def add_search_condition(self):
         # Lấy key và cột từ người dùng

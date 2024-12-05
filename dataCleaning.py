@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, simpledialog, END
 from datetime import datetime
 
@@ -43,42 +44,89 @@ def deleteOutliers(data, col, default_values):
     
     filtered_data = data[data[col].isin(default_values)]
     return filtered_data
+import tkinter as tk
+from tkinter import ttk, messagebox, simpledialog
+
 def fill_missing_data_prompt(viewer):
-    """Hiển thị lời nhắc điền dữ liệu còn thiếu."""
-    col_name = simpledialog.askstring("Nhập cột", "Tên cột:")
-    if col_name not in viewer.df.columns:
-        messagebox.showerror("Lỗi", f"Cột {col_name} không tồn tại.")
-        return
-
-    # Kiểm tra ngay lập tức nếu cột không có giá trị thiếu
-    missing_cnt = viewer.df[col_name].isna().sum()
-    if missing_cnt == 0:
-        messagebox.showinfo("Thông báo", f"Cột {col_name} không có giá trị bị thiếu.")
-        return
-
-    data_type = simpledialog.askstring("Chọn kiểu dữ liệu", "Nhập 's' để chọn chuỗi hoặc 'n' để chọn số:")
-    if data_type not in ['s', 'n']:
-        messagebox.showerror("Lỗi", "Vui lòng chọn 's' cho chuỗi hoặc 'n' cho số.")
-        return
+    """Hiển thị giao diện điền dữ liệu còn thiếu với ràng buộc nhập liệu."""
     
-    while True:
-        try:
-            value = simpledialog.askstring("Nhập giá trị thay thế", "Nhập giá trị thay thế:")
-            if value is None:
-                return  # Người dùng nhấn hủy
-            if data_type == 'n':
-                value = int(value)  # Chuyển thành số nếu cần
-                if value <= 0:
-                    raise ValueError("Giá trị phải lớn hơn 0.")
-            elif data_type == 's':
-                if len(value.strip()) == 0:
-                    raise ValueError("Giá trị không thể trống.")
-            break
-        except ValueError as e:
-            messagebox.showerror("Lỗi", f"Lỗi: {str(e)}")
+    def validate_date_format(date_string):
+        """Kiểm tra chuỗi có đúng định dạng ngày tháng năm."""
+        formats = ["%d/%m/%Y", "%Y-%m-%d"]  # Các định dạng ngày tháng hợp lệ
+        for fmt in formats:
+            try:
+                datetime.strptime(date_string, fmt)
+                return True
+            except ValueError:
+                continue
+        return False
 
-    # Gọi hàm điền dữ liệu
-    viewer.fill_missing_data(col_name, value, data_type)
+    # Tạo cửa sổ con
+    top = tk.Toplevel()
+    top.title("Điền dữ liệu còn thiếu")
+    top.geometry("400x300")
+    top.configure(bg="#f5f5f5")
+    top.transient(viewer.root)
+
+    tk.Label(top, text="Chọn cột cần điền dữ liệu", font=("Arial", 14, "bold"), bg="#f5f5f5").pack(pady=10)
+    
+    col_var = tk.StringVar()
+    column_combobox = ttk.Combobox(top, textvariable=col_var, state="readonly", font=("Arial", 11))
+    column_combobox['values'] = viewer.df.columns.tolist()
+    column_combobox.pack(pady=5, padx=20, ipadx=5, ipady=5)
+
+    tk.Label(top, text="Chọn kiểu dữ liệu:", font=("Arial", 12), bg="#f5f5f5").pack(pady=10)
+    data_type_var = tk.StringVar(value='s')
+    frame_radio = tk.Frame(top, bg="#f5f5f5")
+    frame_radio.pack(pady=5)
+    ttk.Radiobutton(frame_radio, text="Chuỗi", variable=data_type_var, value='s').pack(side=tk.LEFT, padx=10)
+    ttk.Radiobutton(frame_radio, text="Số", variable=data_type_var, value='n').pack(side=tk.LEFT, padx=10)
+
+    def on_confirm():
+        col_name = col_var.get()
+        if not col_name:
+            messagebox.showerror("Lỗi", "Vui lòng chọn một cột.")
+            return
+
+        missing_cnt = viewer.df[col_name].isna().sum()
+        if missing_cnt == 0:
+            messagebox.showinfo("Thông báo", f"Cột '{col_name}' không có giá trị bị thiếu.")
+            top.destroy()
+            return
+
+        data_type = data_type_var.get()
+
+        while True:
+            try:
+                value = simpledialog.askstring("Nhập giá trị thay thế", "Nhập giá trị thay thế:")
+                if value is None:
+                    return  # Người dùng nhấn hủy
+
+                # Kiểm tra dữ liệu theo kiểu đã chọn
+                if data_type == 'n':
+                    if not value.isdigit():
+                        raise ValueError("Giá trị phải là số nguyên dương.")
+                    value = int(value)
+                elif data_type == 's':
+                    if validate_date_format(value):
+                        # Là ngày tháng hợp lệ
+                        pass
+                    else:
+                        if any(char.isdigit() for char in value):
+                            raise ValueError("Giá trị chuỗi không được chứa số (trừ khi là ngày tháng).")
+                        if len(value.strip()) == 0:
+                            raise ValueError("Giá trị không thể trống.")
+                break
+            except ValueError as e:
+                messagebox.showerror("Lỗi", f"{str(e)} Vui lòng nhập lại.")
+
+        viewer.fill_missing_data(col_name, value, data_type)
+        top.destroy()
+
+    btn_frame = tk.Frame(top, bg="#f5f5f5")
+    btn_frame.pack(pady=20)
+    ttk.Button(btn_frame, text="Xác nhận", command=on_confirm).pack(side=tk.LEFT, padx=10)
+    ttk.Button(btn_frame, text="Hủy", command=top.destroy).pack(side=tk.LEFT, padx=10)
 def clean_string(val):
     """Chuẩn hóa chuỗi: loại bỏ khoảng trắng thừa và viết hoa chữ cái đầu mỗi từ."""
     if pd.isna(val):

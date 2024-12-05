@@ -1,7 +1,7 @@
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+from tkinter import ttk, filedialog, messagebox,simpledialog
 import pandas as pd
-from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column#, deleteOutliers, deleteMissingDataRow  # Import hàm sortData từ dataSorting.py
+from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column, is_valid_value#, deleteOutliers, deleteMissingDataRow  # Import hàm sortData từ dataSorting.py
 
 from crud_operations import add_data, update_data, delete_data, save_data, getData
 
@@ -76,7 +76,7 @@ class LargeDatasetViewer:
         menu_bar.add_cascade(label="Cleaning", menu=cleaning_menu)
         cleaning_menu.add_command(label="Xóa hàng trống", command=self.remove_empty_data_rows)
         cleaning_menu.add_command(label="Xóa cột trống", command=self.remove_empty_columns)
-        # cleaning_menu.add_command(label="Xoá giá trị ngoại lai", command=lambda: delete_outliers_menu(self))
+        cleaning_menu.add_command(label="Xóa giá trị ngoại lai", command=self.remove_outliers)
         cleaning_menu.add_command(label="Tìm kiếm", command=self.create_search_widget)  # Thêm mục tìm kiếm vào menu Cleaning
         cleaning_menu.add_command(label="Điền dữ liệu còn thiếu", command=lambda: fill_missing_data_prompt(self))
         cleaning_menu.add_command(label="Chuẩn hoá dữ liệu", command=self.show_normalize_menu)
@@ -340,6 +340,65 @@ class LargeDatasetViewer:
             messagebox.showinfo("Thông báo", "Đã xóa các cột trống.")
         else:
             messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
+
+    def delete_outliers_prompt(self):
+        # Hỏi người dùng nhập tên cột
+        col_name = simpledialog.askstring("Nhập tên cột", "Vui lòng nhập tên cột:")
+        if col_name not in self.df.columns:
+            messagebox.showerror("Lỗi", f"Cột '{col_name}' không tồn tại trong dữ liệu.")
+            return
+
+        # Hỏi người dùng danh sách giá trị hợp lệ
+        valid_values = simpledialog.askstring(
+            "Nhập giá trị hợp lệ",
+            "Vui lòng nhập các giá trị hợp lệ (cách nhau bằng dấu phẩy):"
+        )
+        if not valid_values:
+            messagebox.showerror("Lỗi", "Bạn chưa nhập giá trị hợp lệ.")
+            return
+
+        # Chuyển danh sách giá trị hợp lệ thành tập hợp
+        valid_values = set(value.strip() for value in valid_values.split(","))
+        
+        # Xóa các dòng chứa giá trị ngoại lai
+        try:
+            before_count = len(self.df)
+            self.df = self.df[self.df[col_name].isin(valid_values)]
+            after_count = len(self.df)
+
+            # Thông báo kết quả
+            messagebox.showinfo(
+                "Thông báo",
+                f"Đã xóa {before_count - after_count} dòng chứa giá trị ngoại lai trong cột '{col_name}'."
+            )
+            self.load_data(self.current_page)  # Cập nhật TreeView
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không thể xử lý giá trị ngoại lai: {str(e)}")
+
+    def remove_outliers(self):
+        # Lấy danh sách cột
+        columns = self.df.columns.tolist()
+
+        # Tạo hộp thoại để chọn cột
+        col_name = simpledialog.askstring("Nhóm ", f"Nhập tên cột muốn xử lý:")
+        if not col_name or col_name not in self.df.columns:
+            messagebox.showerror("Lỗi", f"Cột '{col_name}' không tồn tại.")
+            return
+
+        # Loại bỏ giá trị ngoại lai
+        try:
+            before_count = len(self.df)
+            self.df = self.df[self.df[col_name].apply(lambda x: is_valid_value(col_name, str(x)))]
+            after_count = len(self.df)
+            
+            # Thông báo kết quả
+            messagebox.showinfo(
+                "Thông báo",
+                f"Đã xóa {before_count - after_count} dòng chứa giá trị ngoại lai trong cột '{col_name}'."
+            )
+            self.load_data(self.current_page)  # Cập nhật TreeView
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không thể xử lý giá trị ngoại lai: {str(e)}")
 
     def show_histogram(self):
         # Placeholder implementation for showing histogram

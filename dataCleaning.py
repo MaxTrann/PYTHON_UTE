@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from tkinter import ttk, filedialog, messagebox, simpledialog
 from datetime import datetime
+import re
 
 def loadData(Data_File):
     return pd.read_csv(Data_File)
@@ -37,12 +38,6 @@ def search_data(viewer):
         viewer.search_conditions = []
         viewer.condition_listbox.delete(0, ttk.END)
 
-def deleteOutliers(data, col, default_values):
-    if col not in data.columns:
-        raise KeyError(f"Cột '{col}' không tồn tại trong dữ liệu!")
-    
-    filtered_data = data[data[col].isin(default_values)]
-    return filtered_data
 def fill_missing_data_prompt(viewer):
     """Hiển thị lời nhắc điền dữ liệu còn thiếu."""
     col_name = simpledialog.askstring("Nhập cột", "Tên cột:")
@@ -192,3 +187,40 @@ def normalize_column(df, col):
 #     delete_menu = tk.Menu(self.tree, tearoff=0)
 #     delete_menu.add_command(label=f"Xóa dữ liệu ngoại lai trong {col}", command=delete_outliers)
 #     delete_menu.post(self.root.winfo_pointerx(), self.root.winfo_pointery())
+
+# def check_name():
+#     # check chuỗi tên chỉ được chứa chữ và khoảng trắng
+
+# def check_Year_Month_Day():
+#     # check đúng format năm-tháng-ngày
+
+# def check_age():
+#     # check
+
+def is_valid_value(col, value):
+    valid_values = {
+        "Age": lambda v: v.isdigit() and 0 < int(v) <= 120,
+        "Gender": {"Male", "Female", "male", "female"},
+        "Blood Type": {"A+", "B+", "O+", "AB+", "AB-", "A-", "O-", "B-", "a+", "b+", "o+", "ab+", "ab-", "a-", "b-", "o-"},
+        "Medical Condition": {"Cancer", "Diabetes", "Asthma", "Arthritis", "Hypertension", "Obesity", "cancer", "diabetes", "asthma", "arthritis", "aypertension", "obesity"},
+        "Insurance Provider": {"Cigna", "Medicare", "Blue Cross", "UnitedHealthcare", "Aetna", "cigna", "medicare", "blue Cross", "unitedhealthcare", "aetna"},
+        "Room Number": lambda v: v.isdigit() and 0 < int(v) < 1000,
+        "Admission Type": {"Elective", "Emergency", "Urgent", "elective", "emergency", "urgent"},
+        "Medication": {"Penicillin", "Ibuprofen", "Aspirin", "Lipitor", "Paracetamol", "penicillin", "ibuprofen", "aspirin", "lipitor", "paracetamol"},
+        "Test Results": {"Abnormal", "Inconclusive", "Normal", "abnormal", "inconclusive", "normal"},
+        "Name"
+        "Doctor"
+        "Hospital"
+        "Billing Amount": lambda v: v.isdigit() and 0 < float(v),
+        "Date of Admission": lambda v: bool(re.match(r'^\d{4}-\d{2}-\d{2}$', v)),
+        "Discharge Date": lambda v: bool(re.match(r'^\d{4}-\d{2}-\d{2}$', v)),
+    }
+    
+    # Kiểm tra giá trị
+    if col in valid_values:
+        rule = valid_values[col]
+        if isinstance(rule, set):  # Dạng tập hợp giá trị hợp lệ
+            return value in rule
+        elif callable(rule):  # Dạng hàm kiểm tra
+            return rule(value)
+    return True  # Nếu không có điều kiện kiểm tra, giá trị được coi là hợp lệ

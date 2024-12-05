@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from tkinter import ttk, filedialog, messagebox, simpledialog
+from tkinter import ttk, filedialog, messagebox, simpledialog, END
 from datetime import datetime
 
 def loadData(Data_File):
@@ -35,7 +35,7 @@ def search_data(viewer):
 
         # Xóa điều kiện sau khi tìm kiếm
         viewer.search_conditions = []
-        viewer.condition_listbox.delete(0, ttk.END)
+        viewer.condition_listbox.delete(0, END)
 
 def deleteOutliers(data, col, default_values):
     if col not in data.columns:

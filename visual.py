@@ -10,20 +10,15 @@ def bar_chart(data, labels, title='Bar Chart', xlabel='X-axis', ylabel='Y-axis')
     plt.ylabel(ylabel)
     plt.show()
 
-# Đường dẫn tới file CSV
-file_path = "healthcare_dataset.csv"
-
-# Đọc dữ liệu từ file CSV
-data = pd.read_csv(file_path)
-
 def plot_patient_count_by_month_and_condition(data, year=2023):
     # Chuẩn bị dữ liệu
+    data = data.copy()  # Make a copy of the DataFrame
     data['Date of Admission'] = pd.to_datetime(data['Date of Admission'], errors='coerce')  # Chuyển đổi sang kiểu ngày
     data = data[data['Date of Admission'].dt.year == 2023]  # Chỉ lấy dữ liệu của năm 2023
+    data['Month'] = data['Date of Admission'].dt.to_period('M')  # Gộp nhóm theo tháng
     medical_conditions = data['Medical Condition'].unique()  # Lấy danh sách các bệnh duy nhất
 
     # Gộp nhóm dữ liệu theo tháng
-    data['Month'] = data['Date of Admission'].dt.to_period('M')  # Gộp nhóm theo tháng
     grouped_data = data.groupby(['Month', 'Medical Condition']).size().reset_index(name='Count')
 
     # Tạo lưới biểu đồ
@@ -65,11 +60,9 @@ def plot_patient_count_by_month_and_condition(data, year=2023):
 
     # Hiển thị biểu đồ
     plt.show()
-# Gọi hàm để vẽ biểu đồ
-plot_patient_count_by_month_and_condition(data, year=2023)
 
 def plot_admission_type_pie_chart(data):
-#Kiểm tra cột 'Admission Type' và tính toán tỷ lệ
+    # Kiểm tra cột 'Admission Type' và tính toán tỷ lệ
     admission_counts = data['Admission Type'].value_counts()  # Đếm số lượng từng loại
     admission_percentages = admission_counts / admission_counts.sum() * 100  # Tính tỷ lệ phần trăm
 
@@ -88,5 +81,3 @@ def plot_admission_type_pie_chart(data):
 
     # Hiển thị biểu đồ
     plt.show()
-# Gọi hàm để vẽ biểu đồ
-plot_admission_type_pie_chart(data)

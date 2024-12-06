@@ -217,45 +217,72 @@ def normalize_column(df, col):
         raise ValueError(f"Cột {col} không được hỗ trợ chuẩn hóa.")
 
 def check_name(name):
-    # check chuỗi tên chỉ được chứa chữ và khoảng trắng
-    if not isinstance(name, str):
-        return False
+    # check chuỗi tên chỉ được chứa chữ và khoảng trắn
     for char in name:
-        if not char.isalpha() or not " ":
+        if not (char.isalpha() or char.isspace() or char == '.'):
             return False
     return True
 
-def check_Year_Month_Day(): # check đúng format năm-tháng-ngày
-    pass
+def check_hospital(name):
+    # check chuỗi tên chỉ được chứa chữ và khoảng trắn
+    for char in name:
+        if not (char.isalnum() or char.isspace() or char == '.' or char == '-' or char == ','):
+            return False
+    return True
+
+def check_Year_Month_Day(date): # check đúng format năm-tháng-ngày
+    try:
+        parts = date.split("-")
+        if len(parts) != 3:
+            return False
+        year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+        if year < 1 or month < 1 or month > 12 or day < 1 or day > 31:
+            return False
+        if month in {4, 6, 9, 11} and day > 30:
+            return False
+        if month == 2:
+            if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+                if day > 29:
+                    return False
+            else:
+                if day > 28:
+                    return False
+        return True
+    except ValueError:
+        return False
 
 def check_age(Age):
-    if (Age < 0 and Age > 120) or not Age.isdigit():
+    if (int(Age) < 0 or int(Age) > 120) or not Age.isdigit():
         return False
     return True
 
 def check_room(Room):
-    if (Room < 0 and Room > 1000) or not Room.isdigit():
+    if (int(Room) < 0 or int(Room) > 1000) or not Room.isdigit():
         return False
     return True
 
+def check_bill(Amount):
+    if (float(Amount) < 0) or not Amount.isdigit():
+        return False
+    return True
 
 def is_valid_value(col, value):
     valid_values = {
-        "Age": lambda v: v.isdigit() and 0 < int(v) <= 120,
+        "Age": check_age,
         "Gender": {"Male", "Female", "male", "female"},
         "Blood Type": {"A+", "B+", "O+", "AB+", "AB-", "A-", "O-", "B-", "a+", "b+", "o+", "ab+", "ab-", "a-", "b-", "o-"},
         "Medical Condition": {"Cancer", "Diabetes", "Asthma", "Arthritis", "Hypertension", "Obesity", "cancer", "diabetes", "asthma", "arthritis", "aypertension", "obesity"},
         " Provider": {"Cigna", "Medicare", "Blue Cross", "UnitedHealthcare", "Aetna", "cigna", "medicare", "blue Cross", "unitedhealthcare", "aetna"},
-        "Room Number": lambda v: v.isdigit() and 0 < int(v) < 1000,
+        "Room Number": check_room,
         "Admission Type": {"Elective", "Emergency", "Urgent", "elective", "emergency", "urgent"},
         "Medication": {"Penicillin", "Ibuprofen", "Aspirin", "Lipitor", "Paracetamol", "penicillin", "ibuprofen", "aspirin", "lipitor", "paracetamol"},
         "Test Results": {"Abnormal", "Inconclusive", "Normal", "abnormal", "inconclusive", "normal"},
         "Name": check_name,
         "Doctor": check_name,
-        "Hospital"
-        "Billing Amount": lambda v: v.isdigit() and 0 < float(v),
-        "Date of Admission": lambda v: bool(re.match(r'^\d{4}-\d{2}-\d{2}$', v)),
-        "Discharge Date": lambda v: bool(re.match(r'^\d{4}-\d{2}-\d{2}$', v)),
+        "Hospital": check_hospital,
+        "Billing Amount": check_bill,
+        "Date of Admission": check_Year_Month_Day,
+        "Discharge Date": check_Year_Month_Day,
     }
     
     # Kiểm tra giá trị

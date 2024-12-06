@@ -216,14 +216,28 @@ def normalize_column(df, col):
     else:
         raise ValueError(f"Cột {col} không được hỗ trợ chuẩn hóa.")
 
-# def check_name():
-#     # check chuỗi tên chỉ được chứa chữ và khoảng trắng
+def check_name(name):
+    # check chuỗi tên chỉ được chứa chữ và khoảng trắng
+    if not isinstance(name, str):
+        return False
+    for char in name:
+        if not char.isalpha() or not " ":
+            return False
+    return True
 
-# def check_Year_Month_Day():
-#     # check đúng format năm-tháng-ngày
+def check_Year_Month_Day(): # check đúng format năm-tháng-ngày
+    pass
 
-# def check_age():
-#     # check
+def check_age(Age):
+    if (Age < 0 and Age > 120) or not Age.isdigit():
+        return False
+    return True
+
+def check_room(Room):
+    if (Room < 0 and Room > 1000) or not Room.isdigit():
+        return False
+    return True
+
 
 def is_valid_value(col, value):
     valid_values = {
@@ -236,8 +250,8 @@ def is_valid_value(col, value):
         "Admission Type": {"Elective", "Emergency", "Urgent", "elective", "emergency", "urgent"},
         "Medication": {"Penicillin", "Ibuprofen", "Aspirin", "Lipitor", "Paracetamol", "penicillin", "ibuprofen", "aspirin", "lipitor", "paracetamol"},
         "Test Results": {"Abnormal", "Inconclusive", "Normal", "abnormal", "inconclusive", "normal"},
-        "Name"
-        "Doctor"
+        "Name": check_name,
+        "Doctor": check_name,
         "Hospital"
         "Billing Amount": lambda v: v.isdigit() and 0 < float(v),
         "Date of Admission": lambda v: bool(re.match(r'^\d{4}-\d{2}-\d{2}$', v)),

@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox,simpledialog
 import pandas as pd
 from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column, is_valid_value#, deleteOutliers, deleteMissingDataRow  # Import hàm sortData từ dataSorting.py
-
+from visual import plot_patient_count_by_month_and_condition, plot_admission_type_pie_chart
 from crud_operations import add_data, update_data, delete_data, save_data, getData
 
 class LargeDatasetViewer:
@@ -83,8 +83,8 @@ class LargeDatasetViewer:
 
         visual_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Visualize", menu=visual_menu)
-        visual_menu.add_command(label="Histogram", command=self.show_histogram)
-        visual_menu.add_command(label="Scatter Plot", command=self.show_scatter_plot)
+        visual_menu.add_command(label="Biểu đồ cột Số lượng bệnh nhân theo ngày nhập viện và tình trạng bệnh", command=lambda: plot_patient_count_by_month_and_condition(self.df))
+        visual_menu.add_command(label="Biểu đồ tròn Tỷ lệ bệnh nhân nhập viện theo từng loại", command=lambda: plot_admission_type_pie_chart(self.df))
 
         # Bảng dữ liệu (Treeview) với thanh cuộn
         frame = tk.Frame(self.root)

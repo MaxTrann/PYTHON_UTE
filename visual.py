@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 
 def bar_chart(data, labels, title='Bar Chart', xlabel='X-axis', ylabel='Y-axis'):
@@ -81,3 +82,52 @@ def plot_admission_type_pie_chart(data):
 
     # Hiển thị biểu đồ
     plt.show()
+# Đọc dữ liệu từ file
+file_path = 'healthcare_dataset.csv'
+data = pd.read_csv(file_path)
+
+# Đếm số lượng bệnh theo giới tính và loại bệnh
+count_data = data.groupby(['Medical Condition', 'Gender']).size().reset_index(name='Số lượng')
+# Vẽ biểu đồ cột
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Medical Condition', y='Số lượng', hue='Gender', data=count_data)
+# Thêm tiêu đề và nhãn
+plt.title('Biểu đồ loại bệnh theo giới tính')
+plt.xlabel('Loại bệnh')
+plt.ylabel('Số lượng')
+# Hiển thị biểu đồ
+plt.show()
+
+# Nhóm dữ liệu theo Age và Medical Condition, sau đó đếm số lượng bệnh nhân
+age_medical_counts = data.groupby(['Medical Condition', 'Age']).size().reset_index(name='patient_count')
+
+
+# Lấy danh sách các loại bệnh
+medical_conditions = age_medical_counts['Medical Condition'].unique()
+
+
+# Tạo lưới 2x3 để hiển thị 6 biểu đồ
+fig, axes = plt.subplots(2, 3, figsize=(18, 10))
+axes = axes.flatten()
+
+# Lặp qua từng loại bệnh để vẽ biểu đồ riêng
+for i, condition in enumerate(medical_conditions):
+    # Lọc dữ liệu cho loại bệnh hiện tại
+    subset = age_medical_counts[age_medical_counts['Medical Condition'] == condition]
+
+    # Vẽ biểu đồ đường cho loại bệnh
+    sns.lineplot(
+        data=subset, x='Age', y='patient_count', ax=axes[i], marker='o'
+    )
+    axes[i].set_title(f'Loại bệnh: {condition}')
+    axes[i].set_xlabel('Tuổi')
+    axes[i].set_ylabel('Số lượng')
+
+# Ẩn các ô không sử dụng (nếu có thừa ô)
+for j in range(i + 1, len(axes)):
+    axes[j].axis('off')
+
+# Tiêu đề chung cho bảng biểu đồ
+plt.suptitle('biểu đồ số lượng người mắc bệnh theo độ tuổi và loại b', fontsize=16)
+plt.tight_layout(rect=[0, 0, 1, 0.96])
+plt.show()

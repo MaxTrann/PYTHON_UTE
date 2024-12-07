@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox,simpledialog
 import pandas as pd
-from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column, DeleteOutliers # Import hàm sortData từ dataSorting.py
-from visual import plot_patient_count_by_month_and_condition, plot_admission_type_pie_chart, plot_blood_type_pie_chart, plot_stacked_bar_age_insurance
+from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column, DeleteOutliers 
+from visual import plot_patient_count_by_month_and_condition, plot_admission_type_pie_chart
+from visual import plot_blood_type_pie_chart, plot_stacked_bar_age_insurance, plot_gender_distribution, plot_age_medical_condition_distribution
 from crud_operations import add_data, update_data, delete_data, save_data, getData
 
 class LargeDatasetViewer:
@@ -71,7 +72,7 @@ class LargeDatasetViewer:
         crud_menu.add_command(label="Xóa dữ liệu", command=lambda: delete_data(self))
         crud_menu.add_command(label="Lưu dữ liệu", command=lambda: save_data(self))
         
-        # Thêm menu Cleaning
+        
         cleaning_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Cleaning", menu=cleaning_menu)
         cleaning_menu.add_command(label="Xóa hàng trống", command=self.remove_empty_data_rows)
@@ -87,7 +88,8 @@ class LargeDatasetViewer:
         visual_menu.add_command(label="Biểu đồ tròn Tỷ lệ bệnh nhân nhập viện theo từng loại", command=lambda: plot_admission_type_pie_chart(self.df))
         visual_menu.add_command(label="Biểu đồ tròn tỷ lệ nhóm máu", command=lambda:plot_blood_type_pie_chart(self.df))
         visual_menu.add_command(label="Biểu đồ cột chồng thể hiện sự tin dùng các hãng bảo hiểm theo tuổi", command=lambda:plot_stacked_bar_age_insurance(self.df))
-
+        visual_menu.add_command(label="Biểu đồ cột Số lượng bệnh nhân theo giới tính và loại bệnh", command=lambda: plot_gender_distribution(self.df))
+        visual_menu.add_command(label="Biểu đồ đường Số lượng người mắc bệnh theo tuổi và loại bệnh", command=lambda: plot_age_medical_condition_distribution(self.df))
         
 
         # Bảng dữ liệu (Treeview) với thanh cuộn

@@ -178,7 +178,7 @@ def plot_age_medical_condition_distribution(data):
         axes[j].axis('off')
 
     # Tiêu đề chung cho bảng biểu đồ
-    plt.suptitle('biểu đồ số lượng người mắc bệnh theo tuổi và loại bệnh', fontsize=16)
+    plt.suptitle('Biểu đồ số lượng người mắc bệnh theo tuổi và loại bệnh', fontsize=16)
     plt.tight_layout(rect=[0, 0, 1, 0.96])
     plt.show()
 

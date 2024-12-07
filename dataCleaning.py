@@ -266,7 +266,7 @@ def check_bill(Amount):
         return False
     return True
 
-def is_valid_value(col, value):
+def DeleteOutliers(col, value):
     valid_values = {
         "Age": check_age,
         "Gender": {"male", "female"},

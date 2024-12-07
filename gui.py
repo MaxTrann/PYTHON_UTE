@@ -372,12 +372,6 @@ class LargeDatasetViewer:
         except Exception as e:
             messagebox.showerror("Lỗi", f"Không thể xử lý giá trị ngoại lai: {str(e)}")
 
-    def show_histogram(self):
-        # Placeholder implementation for showing histogram
-        pass
-    def show_scatter_plot(self):
-        # Placeholder implementation for showing scatter plot
-        pass
 if __name__ == "__main__":
     root = tk.Tk()
     app = LargeDatasetViewer(root)

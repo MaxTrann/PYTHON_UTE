@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox,simpledialog
 import pandas as pd
 from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column, DeleteOutliers # Import hàm sortData từ dataSorting.py
-from visual import plot_patient_count_by_month_and_condition, plot_admission_type_pie_chart, plot_blood_type_pie_chart, plot_stacked_bar_age_insurance
+from visual import plot_patient_count_by_month_and_condition, plot_admission_type_pie_chart#, plot_blood_type_pie_chart, plot_stacked_bar_age_insurance
 from crud_operations import add_data, update_data, delete_data, save_data, getData
 
 class LargeDatasetViewer:
@@ -76,7 +76,7 @@ class LargeDatasetViewer:
         menu_bar.add_cascade(label="Cleaning", menu=cleaning_menu)
         cleaning_menu.add_command(label="Xóa hàng trống", command=self.remove_empty_data_rows)
         cleaning_menu.add_command(label="Xóa cột trống", command=self.remove_empty_columns)
-        cleaning_menu.add_command(label="Xóa giá trị ngoại lai", command=self.remove_outliers)
+        cleaning_menu.add_command(label="Xóa giá trị ngoại lai", command=self.Delete_Outliers)
         cleaning_menu.add_command(label="Tìm kiếm", command=self.create_search_widget)  # Thêm mục tìm kiếm vào menu Cleaning
         cleaning_menu.add_command(label="Điền dữ liệu còn thiếu", command=lambda: fill_missing_data_prompt(self))
         cleaning_menu.add_command(label="Chuẩn hoá dữ liệu", command=self.show_normalize_menu)
@@ -345,7 +345,7 @@ class LargeDatasetViewer:
         else:
             messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
 
-    def remove_outliers(self):
+    def Delete_Outliers(self):
         # Lấy danh sách cột
         columns = self.df.columns.tolist()
 

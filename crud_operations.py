@@ -32,7 +32,11 @@ def add_data(viewer):
         if not data["Name"] or not data["Age"]:
             messagebox.showerror("Lỗi", "Các trường Name và Age không được để trống!")
             return
-
+        # Ràng buộc tên phải là các kí tự
+        if data["Name"].isdigit():
+            messagebox.showerror("Lỗi", "Name phải là chuỗi kí tự!")
+            return
+        
         # Kiểm tra định dạng số cho Age
         if not data["Age"].isdigit():
             messagebox.showerror("Lỗi", "Age phải là một số nguyên dương!")
@@ -43,9 +47,16 @@ def add_data(viewer):
             messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 120!")
             return
             
-        if not data["Room Number"].isdigit():
-            messagebox.showerror("Lỗi", "Room Number phải là một số nguyên dương!")
+        room_num = data["Room Number"].strip()
+        try:
+            room_num_int = int(room_num)
+            if room_num_int < 0: 
+                messagebox.showerror("Lỗi", "Room Number không được là số âm!")
+                return
+        except:
+            messagebox.showerror("Lỗi", "Room Number phải là một số!")
             return
+            
 
         # Thêm dữ liệu vào DataFrame
         try:
@@ -97,11 +108,14 @@ def update_data(viewer):
             viewer.df.at[index, key] = value
     
 
-        # Kiểm tra định dạng số cho Age và Billing Amount
+        # Kiểm tra định dạng số cho Age
         if not new_data["Age"].isdigit():
             messagebox.showerror("Lỗi", "Age phải là một số nguyên dương!")
             return
         
+        if new_data["Name"].isdigit():
+            messagebox.showerror("Lỗi", "Name phải là chuỗi kí tự!")
+            return
 
         if int(new_data["Age"]) > 120:
             messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 100!")

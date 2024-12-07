@@ -226,7 +226,7 @@ def check_name(name):
 def check_hospital(name):
     # check chuỗi tên chỉ được chứa chữ và khoảng trắn
     for char in name:
-        if not (char.isalnum() or char.isspace() or char == '.' or char == '-' or char == ','):
+        if not (char.isalnum() or char.isspace() or char == '.' or char == '-'):
             return False
     return True
 
@@ -269,14 +269,14 @@ def check_bill(Amount):
 def is_valid_value(col, value):
     valid_values = {
         "Age": check_age,
-        "Gender": {"Male", "Female", "male", "female"},
-        "Blood Type": {"A+", "B+", "O+", "AB+", "AB-", "A-", "O-", "B-", "a+", "b+", "o+", "ab+", "ab-", "a-", "b-", "o-"},
-        "Medical Condition": {"Cancer", "Diabetes", "Asthma", "Arthritis", "Hypertension", "Obesity", "cancer", "diabetes", "asthma", "arthritis", "aypertension", "obesity"},
-        " Provider": {"Cigna", "Medicare", "Blue Cross", "UnitedHealthcare", "Aetna", "cigna", "medicare", "blue Cross", "unitedhealthcare", "aetna"},
+        "Gender": {"male", "female"},
+        "Blood Type": {"a+", "b+", "o+", "ab+", "ab-", "a-", "b-", "o-"},
+        "Medical Condition": {"cancer", "diabetes", "asthma", "arthritis", "aypertension", "obesity"},
+        " Provider": {"cigna", "medicare", "blue Cross", "unitedhealthcare", "aetna"},
         "Room Number": check_room,
-        "Admission Type": {"Elective", "Emergency", "Urgent", "elective", "emergency", "urgent"},
-        "Medication": {"Penicillin", "Ibuprofen", "Aspirin", "Lipitor", "Paracetamol", "penicillin", "ibuprofen", "aspirin", "lipitor", "paracetamol"},
-        "Test Results": {"Abnormal", "Inconclusive", "Normal", "abnormal", "inconclusive", "normal"},
+        "Admission Type": {"elective", "emergency", "urgent"},
+        "Medication": {"penicillin", "ibuprofen", "aspirin", "lipitor", "paracetamol"},
+        "Test Results": {"abnormal", "inconclusive", "normal"},
         "Name": check_name,
         "Doctor": check_name,
         "Hospital": check_hospital,
@@ -284,6 +284,9 @@ def is_valid_value(col, value):
         "Date of Admission": check_Year_Month_Day,
         "Discharge Date": check_Year_Month_Day,
     }
+
+    if isinstance(value, str):
+        value = value.lower().strip()
     
     # Kiểm tra giá trị
     if col in valid_values:

@@ -144,9 +144,9 @@ def plot_gender_distribution(data):
     plt.figure(figsize=(10, 6))
     sns.barplot(x='Medical Condition', y='Số lượng', hue='Gender', data=count_data)
     # Thêm tiêu đề và nhãn
-    plt.title('Biểu đồ số lượng bệnh nhân theo giới tính và loại bệnh')
+    plt.title('SỐ LƯỢNG BỆNH NHÂN THEO GIỚI TÍNH VÀ LOẠI BỆNH')
     plt.xlabel('Loại bệnh')
-    plt.ylabel('Số lượng')
+    plt.ylabel('Số lượng bệnh nhân')
     # Hiển thị biểu đồ
     plt.show()
 def plot_age_medical_condition_distribution(data):
@@ -171,14 +171,14 @@ def plot_age_medical_condition_distribution(data):
         )
         axes[i].set_title(f'Loại bệnh: {condition}')
         axes[i].set_xlabel('Tuổi')
-        axes[i].set_ylabel('Số lượng')
+        axes[i].set_ylabel('Số lượng bệnh nhân')
 
     # Ẩn các ô không sử dụng (nếu có thừa ô)
     for j in range(i + 1, len(axes)):
         axes[j].axis('off')
 
     # Tiêu đề chung cho bảng biểu đồ
-    plt.suptitle('Biểu đồ số lượng người mắc bệnh theo tuổi và loại bệnh', fontsize=16)
+    plt.suptitle('SỐ LƯỢNG BỆNH NHÂN THEO ĐỘ TUỔI VÀ LOẠI BỆNH', fontsize=16)
     plt.tight_layout(rect=[0, 0, 1, 0.96])
     plt.show()
 

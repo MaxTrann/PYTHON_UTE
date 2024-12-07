@@ -83,22 +83,6 @@ def plot_admission_type_pie_chart(data):
     # Hiển thị biểu đồ
     plt.show()
 
-# def plot_blood_type_pie_chart(data):
-#     # Tính toán tỷ lệ nhóm máu
-#     blood_type_counts = data['Blood Type'].value_counts()
-
-#     # Tạo biểu đồ tròn
-#     plt.figure(figsize=(8, 8))
-#     plt.pie(
-#         blood_type_counts, 
-#         labels=blood_type_counts.index, 
-#         autopct='%1.1f%%', 
-#         startangle=90, 
-#         colors=plt.cm.Set3.colors
-#     )
-#     plt.title("Tỷ lệ nhóm máu của bệnh nhân", fontsize=16)
-#     plt.show()
-
 def plot_blood_type_pie_chart(data):
     if 'Blood Type' not in data.columns:
         raise KeyError("Dữ liệu không chứa thông tin 'Blood Type'")

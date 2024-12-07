@@ -138,3 +138,48 @@ def plot_stacked_bar_age_insurance(data):
     plt.xticks(rotation=45, fontsize=10)
     plt.tight_layout()
     plt.show()
+def plot_gender_distribution(data):
+    count_data = data.groupby(['Medical Condition', 'Gender']).size().reset_index(name='Số lượng')
+    # Vẽ biểu đồ cột
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Medical Condition', y='Số lượng', hue='Gender', data=count_data)
+    # Thêm tiêu đề và nhãn
+    plt.title('Biểu đồ số lượng bệnh nhân theo giới tính và loại bệnh')
+    plt.xlabel('Loại bệnh')
+    plt.ylabel('Số lượng')
+    # Hiển thị biểu đồ
+    plt.show()
+def plot_age_medical_condition_distribution(data):
+    # Nhóm dữ liệu theo Age và Medical Condition, sau đó đếm số lượng bệnh nhân
+    age_medical_counts = data.groupby(['Medical Condition', 'Age']).size().reset_index(name='patient_count')
+
+    # Lấy danh sách các loại bệnh
+    medical_conditions = age_medical_counts['Medical Condition'].unique()
+
+    # Tạo lưới 2x3 để hiển thị 6 biểu đồ
+    fig, axes = plt.subplots(2, 3, figsize=(18, 10))
+    axes = axes.flatten()
+
+    # Lặp qua từng loại bệnh để vẽ biểu đồ riêng
+    for i, condition in enumerate(medical_conditions):
+        # Lọc dữ liệu cho loại bệnh hiện tại
+        subset = age_medical_counts[age_medical_counts['Medical Condition'] == condition]
+        
+        # Vẽ biểu đồ đường cho loại bệnh
+        sns.lineplot(
+            data=subset, x='Age', y='patient_count', ax=axes[i], marker='o'
+        )
+        axes[i].set_title(f'Loại bệnh: {condition}')
+        axes[i].set_xlabel('Tuổi')
+        axes[i].set_ylabel('Số lượng')
+
+    # Ẩn các ô không sử dụng (nếu có thừa ô)
+    for j in range(i + 1, len(axes)):
+        axes[j].axis('off')
+
+    # Tiêu đề chung cho bảng biểu đồ
+    plt.suptitle('biểu đồ số lượng người mắc bệnh theo tuổi và loại bệnh', fontsize=16)
+    plt.tight_layout(rect=[0, 0, 1, 0.96])
+    plt.show()
+
+

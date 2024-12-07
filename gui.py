@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox,simpledialog
 import pandas as pd
 from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column, DeleteOutliers # Import hàm sortData từ dataSorting.py
-from visual import plot_patient_count_by_month_and_condition, plot_admission_type_pie_chart#, plot_blood_type_pie_chart, plot_stacked_bar_age_insurance
+from visual import plot_patient_count_by_month_and_condition, plot_admission_type_pie_chart, plot_blood_type_pie_chart, plot_stacked_bar_age_insurance
 from crud_operations import add_data, update_data, delete_data, save_data, getData
 
 class LargeDatasetViewer:
@@ -86,7 +86,7 @@ class LargeDatasetViewer:
         visual_menu.add_command(label="Biểu đồ cột Số lượng bệnh nhân theo ngày nhập viện và tình trạng bệnh", command=lambda: plot_patient_count_by_month_and_condition(self.df))
         visual_menu.add_command(label="Biểu đồ tròn Tỷ lệ bệnh nhân nhập viện theo từng loại", command=lambda: plot_admission_type_pie_chart(self.df))
         visual_menu.add_command(label="Biểu đồ tròn tỷ lệ nhóm máu", command=lambda:plot_blood_type_pie_chart(self.df))
-        visual_menu.add_command(label="Biểu đồ cột chồng nhóm đối tượng tin dùng bảo hiểm", command=lambda:plot_stacked_bar_age_insurance(self.df))
+        visual_menu.add_command(label="Biểu đồ cột chồng thể hiện sự tin dùng các hãng bảo hiểm theo tuổi", command=lambda:plot_stacked_bar_age_insurance(self.df))
 
         
 

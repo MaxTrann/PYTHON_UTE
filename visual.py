@@ -82,3 +82,75 @@ def plot_admission_type_pie_chart(data):
 
     # Hiển thị biểu đồ
     plt.show()
+
+# def plot_blood_type_pie_chart(data):
+#     # Tính toán tỷ lệ nhóm máu
+#     blood_type_counts = data['Blood Type'].value_counts()
+
+#     # Tạo biểu đồ tròn
+#     plt.figure(figsize=(8, 8))
+#     plt.pie(
+#         blood_type_counts, 
+#         labels=blood_type_counts.index, 
+#         autopct='%1.1f%%', 
+#         startangle=90, 
+#         colors=plt.cm.Set3.colors
+#     )
+#     plt.title("Tỷ lệ nhóm máu của bệnh nhân", fontsize=16)
+#     plt.show()
+
+def plot_blood_type_pie_chart(data):
+    if 'Blood Type' not in data.columns:
+        raise KeyError("Dữ liệu không chứa thông tin 'Blood Type'")
+    
+    # Đếm số lượng từng nhóm máu
+    blood_type_counts = data['Blood Type'].value_counts()
+    labels = blood_type_counts.index
+    sizes = blood_type_counts.values
+
+    # Vẽ biểu đồ tròn
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.axis('equal')  # Đảm bảo biểu đồ tròn không bị méo
+    ax.pie(
+        sizes, 
+        labels=labels, 
+        autopct='%1.2f%%', 
+        startangle=90, 
+        colors=plt.cm.Set3.colors
+    )
+    ax.set_title("Tỷ lệ nhóm máu của bệnh nhân", fontsize=16)
+    plt.show()
+
+
+def plot_stacked_bar_age_insurance(data):
+    # Chuẩn hóa tên cột
+    data.columns = [col.strip().title() for col in data.columns]
+
+    # Kiểm tra lại cột 'Age' và 'Insurance Provider'
+    if 'Age' not in data.columns or 'Insurance Provider' not in data.columns:
+        raise KeyError("Dữ liệu không chứa thông tin 'Age' hoặc 'Insurance Provider'")
+    
+    # Chuyển cột Age sang dạng số
+    data['Age'] = pd.to_numeric(data['Age'], errors='coerce')
+
+    if data['Age'].isna().all():
+        raise ValueError("Không có giá trị hợp lệ trong cột 'Age'")
+
+    # Phân loại nhóm tuổi
+    bins = [0, 18, 35, 50, 65, 120]
+    labels = ['0-18', '19-35', '36-50', '51-65', '65+']
+    data['Age Group'] = pd.cut(data['Age'], bins=bins, labels=labels, right=False)
+
+    # Gộp nhóm dữ liệu theo Insurance Provider và Age Group
+    grouped_data = data.groupby(['Insurance Provider', 'Age Group'], observed=False).size().unstack(fill_value=0)
+
+    # Vẽ biểu đồ cột chồng
+    grouped_data.plot(kind='bar', stacked=True, figsize=(12, 8), colormap='viridis')
+    plt.title("Phân phối nhóm tuổi theo Insurance Provider", fontsize=16)
+    plt.xlabel("Insurance Provider", fontsize=12)
+    plt.ylabel("Số lượng bệnh nhân", fontsize=12)
+    plt.legend(title="Age Group", fontsize=10, bbox_to_anchor=(1.05, 1))
+    plt.xticks(rotation=45, fontsize=10)
+    plt.tight_layout()
+    plt.show()

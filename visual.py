@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 
 def bar_chart(data, labels, title='Bar Chart', xlabel='X-axis', ylabel='Y-axis'):
@@ -80,54 +81,4 @@ def plot_admission_type_pie_chart(data):
     plt.title("Tỷ lệ bệnh nhân nhập viện theo từng loại (Admission Type)", fontsize=16)
 
     # Hiển thị biểu đồ
-    plt.show()
-
-def plot_blood_type_pie_chart(data):
-    # Tính toán tỷ lệ nhóm máu
-    blood_type_counts = data['Blood Type'].value_counts()
-
-    plt.figure(figsize=(8, 8))
-    plt.pie(
-        blood_type_counts, 
-        labels=blood_type_counts.index, 
-        autopct='%1.1f%%', 
-        startangle=90, 
-        colors=plt.cm.Set3.colors
-    )
-    plt.title("Tỷ lệ nhóm máu của bệnh nhân", fontsize=16)
-    plt.show()
-
-
-def plot_stacked_bar_age_insurance(data):
-    """Biểu đồ cột chồng: Phân phối nhóm tuổi theo Insurance Provider."""
-
-    # Chuẩn hóa tên cột
-    data.columns = [col.strip().title() for col in data.columns]
-
-    # Kiểm tra lại cột 'Age' và 'Insurance Provider'
-    if 'Age' not in data.columns or 'Insurance Provider' not in data.columns:
-        raise KeyError("Dữ liệu không chứa thông tin 'Age' hoặc 'Insurance Provider'")
-    
-    # Chuyển cột Age sang dạng số
-    data['Age'] = pd.to_numeric(data['Age'], errors='coerce')
-
-    if data['Age'].isna().all():
-        raise ValueError("Không có giá trị hợp lệ trong cột 'Age'")
-
-    # Phân loại nhóm tuổi
-    bins = [0, 18, 45, 65, 120]
-    labels = ['0-18', '19-45', '46-65', '65+']
-    data['Age Group'] = pd.cut(data['Age'], bins=bins, labels=labels, right=False)
-
-    # Gộp nhóm dữ liệu theo Insurance Provider và Age Group
-    grouped_data = data.groupby(['Insurance Provider', 'Age Group'], observed=False).size().unstack(fill_value=0)
-
-    # Vẽ biểu đồ cột chồng
-    grouped_data.plot(kind='bar', stacked=True, figsize=(12, 8), colormap='viridis')
-    plt.title("Phân phối nhóm tuổi theo Insurance Provider", fontsize=16)
-    plt.xlabel("Insurance Provider", fontsize=12)
-    plt.ylabel("Số lượng bệnh nhân", fontsize=12)
-    plt.legend(title="Age Group", fontsize=10)
-    plt.xticks(rotation=45, fontsize=10)
-    plt.tight_layout()
     plt.show()

@@ -351,7 +351,7 @@ class LargeDatasetViewer:
     def Delete_Outliers(self):
         columns = self.df.columns.tolist()
         # Box nhập tên cột
-        col_name = simpledialog.askstring("Nhóm ", f"Nhập tên cột muốn xử lý:")
+        col_name = simpledialog.askstring("Giá trị ngoại lai", f"Nhập tên cột muốn xử lý:")
         if not col_name or col_name not in self.df.columns:
             messagebox.showerror("Lỗi", f"Cột '{col_name}' không tồn tại")
             return

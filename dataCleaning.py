@@ -224,9 +224,9 @@ def check_name(name):
     return True
 
 def check_hospital(name):
-    # check chuỗi tên chỉ được chứa chữ và khoảng trắn
+    # check chuỗi tên bệnh viện
     for char in name:
-        if not (char.isalnum() or char.isspace() or char == '.' or char == '-'):
+        if not (char.isalnum() or char.isspace() or char == '.' or char == '-') or char == ',':
             return False
     return True
 
@@ -235,7 +235,7 @@ def check_Year_Month_Day(date): # check đúng format năm-tháng-ngày
         parts = date.split("-")
         if len(parts) != 3:
             return False
-        year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+        year, month, day = int(parts[0]), int(parts[1]), int(parts[2]) # 3 phần năm tháng ngày
         if year < 1 or month < 1 or month > 12 or day < 1 or day > 31:
             return False
         if month in {4, 6, 9, 11} and day > 30:
@@ -262,9 +262,11 @@ def check_room(Room):
     return True
 
 def check_bill(Amount):
-    if (float(Amount) < 0) or not Amount.isdigit():
+    value = float(Amount)
+    try:
+        return value >= 0
+    except:
         return False
-    return True
 
 def DeleteOutliers(col, value):
     valid_values = {
@@ -272,7 +274,7 @@ def DeleteOutliers(col, value):
         "Gender": {"male", "female"},
         "Blood Type": {"a+", "b+", "o+", "ab+", "ab-", "a-", "b-", "o-"},
         "Medical Condition": {"cancer", "diabetes", "asthma", "arthritis", "aypertension", "obesity"},
-        " Provider": {"cigna", "medicare", "blue Cross", "unitedhealthcare", "aetna"},
+        "Provider": {"cigna", "medicare", "blue Cross", "unitedhealthcare", "aetna"},
         "Room Number": check_room,
         "Admission Type": {"elective", "emergency", "urgent"},
         "Medication": {"penicillin", "ibuprofen", "aspirin", "lipitor", "paracetamol"},
@@ -295,4 +297,4 @@ def DeleteOutliers(col, value):
             return value in rule
         elif callable(rule):  # Dạng hàm kiểm tra
             return rule(value)
-    return True  # Nếu không có điều kiện kiểm tra, giá trị được coi là hợp lệ
+    return True

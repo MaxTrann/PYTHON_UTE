@@ -230,27 +230,6 @@ def check_hospital(name):
             return False
     return True
 
-def check_Year_Month_Day(date): # check đúng format năm-tháng-ngày
-    try:
-        parts = date.split("-")
-        if len(parts) != 3:
-            return False
-        year, month, day = int(parts[0]), int(parts[1]), int(parts[2]) # 3 phần năm tháng ngày
-        if year < 1 or month < 1 or month > 12 or day < 1 or day > 31:
-            return False
-        if month in {4, 6, 9, 11} and day > 30:
-            return False
-        if month == 2:
-            if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
-                if day > 29:
-                    return False
-            else:
-                if day > 28:
-                    return False
-        return True
-    except ValueError:
-        return False
-
 def check_age(Age):
     if (int(Age) < 0 or int(Age) > 120) or not Age.isdigit():
         return False
@@ -266,6 +245,28 @@ def check_bill(Amount):
     try:
         return value >= 0
     except:
+        return False
+
+def check_Year_Month_Day(date): # check đúng format năm-tháng-ngày
+    try:
+        parts = date.split("-")
+        if len(parts) != 3:
+            return False
+        # 3 phần năm tháng ngày
+        year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+        if year < 1 or month < 1 or month > 12 or day < 1 or day > 31:
+            return False
+        if month in {4, 6, 9, 11} and day > 30:
+            return False
+        if month == 2:
+            if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+                if day > 29:
+                    return False
+            else:
+                if day > 28:
+                    return False
+        return True
+    except ValueError:
         return False
 
 def DeleteOutliers(col, value):

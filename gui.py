@@ -361,7 +361,7 @@ class LargeDatasetViewer:
             before_count = len(self.df)
             self.df = self.df[self.df[col_name].apply(lambda x: DeleteOutliers(col_name, str(x)))]
             after_count = len(self.df)
-            # Kết quả
+            # Thông báo
             messagebox.showinfo("Thông báo", 
             f"Đã xóa {before_count - after_count} dòng chứa giá trị ngoại lai trong cột {col_name}.")
             self.load_data(self.current_page) # Cập nhật lại dữ liệu

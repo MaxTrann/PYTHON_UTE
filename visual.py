@@ -93,38 +93,25 @@ def plot_blood_type(data):
     sizes = blood_type_counts.values
 
     # Vẽ biểu đồ tròn
-    fig = plt.figure(figsize=(8, 8))
+    plt.figure(figsize=(8, 8))
     plt.pie(sizes, labels=labels, autopct='%1.2f%%')
     plt.title(label="Blood rate by type")
     plt.show()
 
 def plot_stacked_bar_age_insurance(data):
-    # Chuẩn hóa tên cột
-    data.columns = [col.strip().title() for col in data.columns]
-
-    # Kiểm tra lại cột 'Age' và 'Insurance Provider'
-    if 'Age' not in data.columns or 'Insurance Provider' not in data.columns:
-        raise KeyError("Dữ liệu không chứa thông tin 'Age' hoặc 'Insurance Provider'")
-    
-    # Chuyển cột Age sang dạng số
-    data['Age'] = pd.to_numeric(data['Age'], errors='coerce')
-
-    if data['Age'].isna().all():
-        raise ValueError("Không có giá trị hợp lệ trong cột 'Age'")
-
     # Phân loại nhóm tuổi
     bins = [0, 18, 44, 65, 120]
     labels = ['0-18', '19-34', '45-65', '65+']
-    data['Age Group'] = pd.cut(data['Age'], bins=bins, labels=labels, right=False)
+    data['Age Group'] = pd.cut(data['Age'], bins=bins, labels=labels)
 
     # Gộp nhóm dữ liệu theo Insurance Provider và Age Group
-    grouped_data = data.groupby(['Insurance Provider', 'Age Group'], observed=False).size().unstack(fill_value=0)
+    grouped_data = data.groupby(['Insurance Provider', 'Age Group']).size().unstack(fill_value=0)
 
     # Vẽ biểu đồ cột chồng
     grouped_data.plot(kind='bar', stacked=True, figsize=(12, 8), colormap='viridis')
-    plt.title("Age distribution by Insurance Provider", fontsize=16)
+    plt.title("Age group distribution by Insurance Provider", fontsize=16)
     plt.xlabel("Insurance Provider", fontsize=10)
-    plt.ylabel("Patient Amount", fontsize=10)
+    plt.ylabel("Patient Count", fontsize=10)
     plt.legend(title="Age Group", fontsize=8)
     plt.xticks(rotation=45, fontsize=10)
     plt.tight_layout()

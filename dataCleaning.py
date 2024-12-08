@@ -303,3 +303,14 @@ def DeleteOutliers(col, value):
         elif callable(rule):  # Dạng hàm kiểm tra
             return rule(value)
     return True
+
+def deleteMissingData(viewer):
+    if viewer is not None:
+        return viewer.dropna(axis=0)  # Trả về DataFrame mới sau khi xóa các dòng NaN
+    else:
+        raise ValueError("Không có dữ liệu để xử lý.")
+def deleteUnusedColumn(viewer, col):
+    if col in viewer.columns:
+        return viewer.drop(columns=[col])  # Trả về DataFrame mới sau khi xóa cột
+    else:
+        raise KeyError(f"Cột '{col}' không tồn tại.")

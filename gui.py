@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox,simpledialog
 import pandas as pd
-from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column, DeleteOutliers 
+from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column, DeleteOutliers, deleteMissingData, deleteUnusedColumn
 from visual import plot_patient_count_by_month_and_condition, plot_admission_type_pie_chart
 from visual import plot_blood_type, plot_stacked_bar_age_insurance, plot_gender_distribution, plot_age_medical_condition_distribution
 from crud_operations import add_data, update_data, delete_data, save_data, getData
@@ -333,27 +333,26 @@ class LargeDatasetViewer:
             messagebox.showerror("Lỗi", f"Không thể chuẩn hóa cột {col}: {e}")
 
     def remove_empty_data_rows(self):
-        if self.df is not None:
-            self.df = self.df.dropna(axis=0)  # Xóa dòng có bất kỳ giá trị NaN nào
-            self.load_data(self.current_page)  # Cập nhật lại dữ liệu
+        try:
+            self.df = deleteMissingData(self.df)
+            self.load_data(self.current_page)  # Cập nhật giao diện
             messagebox.showinfo("Thông báo", "Đã xóa các dòng chứa dữ liệu trống.")
-        else:
-            messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
+        except ValueError:
+            messagebox.showerror("Lỗi")
 
     def remove_unused_columns(self):
         if self.df is not None:
-            removed_col = simpledialog.askstring(
-            "Xóa cột", "Nhập tên các cột cần xóa:")
-            if removed_col:
-                removed_col = removed_col.strip()# bỏ khoảng trắng
-                if removed_col in self.df.columns:
-                    self.df = self.df.drop(columns=[removed_col])# Xóa cột
-                    self.load_data(self.current_page) #Cập nhật
-                    messagebox.showinfo("Thông báo", f"Đã xóa cột: {removed_col}")
-                else:
-                    messagebox.showwarning("Thông báo", "Cột không tồn tại.")
+            column_name = simpledialog.askstring("Xóa cột", "Nhập tên cột cần xóa:")
+            if column_name:
+                column_name = column_name.strip()  # Bỏ khoảng trắng
+                try:
+                    self.df = deleteUnusedColumn(self.df, column_name)
+                    self.load_data(self.current_page)  # Cập nhật giao diện
+                    messagebox.showinfo("Thông báo", f"Đã xóa cột: {column_name}")
+                except KeyError as e:
+                    messagebox.showwarning("Thông báo", str(e))
             else:
-                messagebox.showinfo("Thông báo", "Vui lòng nhập cột để xóa.")
+                messagebox.showinfo("Thông báo", "Vui lòng nhập tên cột để xóa.")
         else:
             messagebox.showerror("Lỗi", "Không có dữ liệu.")
 

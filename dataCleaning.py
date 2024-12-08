@@ -226,19 +226,23 @@ def check_name(name):
 def check_hospital(name):
     # check chuỗi tên bệnh viện
     for char in name:
-        if not (char.isalnum() or char.isspace() or char == '.' or char == '-') or char == ',':
+        if not (char.isalnum() or char.isspace() or char == '.' or char == '-' or char == ','):
             return False
     return True
 
 def check_age(Age):
-    if (int(Age) < 0 or int(Age) > 120) or not Age.isdigit():
+    value = int(Age)
+    try:
+        return 0 < value <= 120
+    except:
         return False
-    return True
 
 def check_room(Room):
-    if (int(Room) < 0 or int(Room) > 1000) or not Room.isdigit():
+    value = int(Room)
+    try:
+        return 0 < value <= 1000
+    except:
         return False
-    return True
 
 def check_bill(Amount):
     value = float(Amount)

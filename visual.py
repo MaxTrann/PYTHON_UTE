@@ -83,7 +83,7 @@ def plot_admission_type_pie_chart(data):
     # Hiển thị biểu đồ
     plt.show()
 
-def plot_blood_type_pie_chart(data):
+def plot_blood_type(data):
     if 'Blood Type' not in data.columns:
         raise KeyError("Dữ liệu không chứa thông tin 'Blood Type'")
     
@@ -96,16 +96,9 @@ def plot_blood_type_pie_chart(data):
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_axes([0, 0, 1, 1])
     ax.axis('equal')  # Đảm bảo biểu đồ tròn không bị méo
-    ax.pie(
-        sizes, 
-        labels=labels, 
-        autopct='%1.2f%%', 
-        startangle=90, 
-        colors=plt.cm.Set3.colors
-    )
+    ax.pie(sizes, labels=labels, autopct='%1.2f%%', startangle=90, colors=plt.cm.Set3.colors)
     ax.set_title("Tỷ lệ nhóm máu của bệnh nhân", fontsize=16)
     plt.show()
-
 
 def plot_stacked_bar_age_insurance(data):
     # Chuẩn hóa tên cột
@@ -122,8 +115,8 @@ def plot_stacked_bar_age_insurance(data):
         raise ValueError("Không có giá trị hợp lệ trong cột 'Age'")
 
     # Phân loại nhóm tuổi
-    bins = [0, 18, 35, 50, 65, 120]
-    labels = ['0-18', '19-35', '36-50', '51-65', '65+']
+    bins = [0, 18, 44, 65, 120]
+    labels = ['0-18', '19-34', '45-65', '65+']
     data['Age Group'] = pd.cut(data['Age'], bins=bins, labels=labels, right=False)
 
     # Gộp nhóm dữ liệu theo Insurance Provider và Age Group
@@ -138,6 +131,7 @@ def plot_stacked_bar_age_insurance(data):
     plt.xticks(rotation=45, fontsize=10)
     plt.tight_layout()
     plt.show()
+    
 def plot_gender_distribution(data):
     count_data = data.groupby(['Medical Condition', 'Gender']).size().reset_index(name='Số lượng')
     # Vẽ biểu đồ cột

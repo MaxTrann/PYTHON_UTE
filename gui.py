@@ -3,7 +3,7 @@ from tkinter import ttk, filedialog, messagebox,simpledialog
 import pandas as pd
 from dataCleaning import sortData, search_data,fill_missing_data_prompt,normalize_column, DeleteOutliers 
 from visual import plot_patient_count_by_month_and_condition, plot_admission_type_pie_chart
-from visual import plot_blood_type_pie_chart, plot_stacked_bar_age_insurance, plot_gender_distribution, plot_age_medical_condition_distribution
+from visual import plot_blood_type, plot_stacked_bar_age_insurance, plot_gender_distribution, plot_age_medical_condition_distribution
 from crud_operations import add_data, update_data, delete_data, save_data, getData
 
 class LargeDatasetViewer:
@@ -86,7 +86,7 @@ class LargeDatasetViewer:
         menu_bar.add_cascade(label="Visualize", menu=visual_menu)
         visual_menu.add_command(label="Biểu đồ cột Số lượng bệnh nhân theo ngày nhập viện và tình trạng bệnh", command=lambda: plot_patient_count_by_month_and_condition(self.df))
         visual_menu.add_command(label="Biểu đồ tròn Tỷ lệ bệnh nhân nhập viện theo từng loại", command=lambda: plot_admission_type_pie_chart(self.df))
-        visual_menu.add_command(label="Biểu đồ tròn tỷ lệ nhóm máu", command=lambda:plot_blood_type_pie_chart(self.df))
+        visual_menu.add_command(label="Biểu đồ tròn tỷ lệ nhóm máu", command=lambda:plot_blood_type(self.df))
         visual_menu.add_command(label="Biểu đồ cột chồng thể hiện sự tin dùng các hãng bảo hiểm theo tuổi", command=lambda:plot_stacked_bar_age_insurance(self.df))
         visual_menu.add_command(label="Biểu đồ cột Số lượng bệnh nhân theo giới tính và loại bệnh", command=lambda: plot_gender_distribution(self.df))
         visual_menu.add_command(label="Biểu đồ đường Số lượng người mắc bệnh theo tuổi và loại bệnh", command=lambda: plot_age_medical_condition_distribution(self.df))
@@ -331,6 +331,7 @@ class LargeDatasetViewer:
             messagebox.showerror("Lỗi", str(e))
         except Exception as e:
             messagebox.showerror("Lỗi", f"Không thể chuẩn hóa cột {col}: {e}")
+
     def remove_empty_data_rows(self):
         if self.df is not None:
             self.df = self.df.dropna(axis=0)  # Xóa dòng có bất kỳ giá trị NaN nào
@@ -342,16 +343,14 @@ class LargeDatasetViewer:
     def remove_empty_columns(self):
         if self.df is not None:
             self.df = self.df.dropna(axis=1, how="all")  # Xóa các cột chứa toàn bộ là NaN
-            self.load_data(self.current_page)  # Tải lại dữ liệu sau khi làm sạch
+            self.load_data(self.current_page)  # Cập nhật lại dữ liệu
             messagebox.showinfo("Thông báo", "Đã xóa các cột trống.")
         else:
             messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
 
     def Delete_Outliers(self):
-        # Lấy danh sách cột
         columns = self.df.columns.tolist()
-
-        # Tạo hộp thoại để chọn cột
+        # Box nhập tên cột
         col_name = simpledialog.askstring("Nhóm ", f"Nhập tên cột muốn xử lý:")
         if not col_name or col_name not in self.df.columns:
             messagebox.showerror("Lỗi", f"Cột '{col_name}' không tồn tại.")
@@ -362,13 +361,10 @@ class LargeDatasetViewer:
             before_count = len(self.df)
             self.df = self.df[self.df[col_name].apply(lambda x: DeleteOutliers(col_name, str(x)))]
             after_count = len(self.df)
-            
-            # Thông báo kết quả
-            messagebox.showinfo(
-                "Thông báo",
-                f"Đã xóa {before_count - after_count} dòng chứa giá trị ngoại lai trong cột '{col_name}'."
-            )
-            self.load_data(self.current_page)  # Cập nhật TreeView
+            # Kết quả
+            messagebox.showinfo("Thông báo", 
+            f"Đã xóa {before_count - after_count} dòng chứa giá trị ngoại lai trong cột {col_name}.")
+            self.load_data(self.current_page)
         except Exception as e:
             messagebox.showerror("Lỗi", f"Không thể xử lý giá trị ngoại lai: {str(e)}")
 

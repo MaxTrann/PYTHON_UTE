@@ -15,19 +15,16 @@ def add_data(viewer):
         "Discharge Date", "Medication", "Test Results"
     ]
     entries = {}
-
     # Tạo các nhãn và ô nhập liệu
     for i, label in enumerate(labels):
         tk.Label(input_window, text=f"{label}:").grid(row=i, column=0, padx=10, pady=5)
         entry = tk.Entry(input_window)
         entry.grid(row=i, column=1, padx=10, pady=5)
         entries[label] = entry
-
     # Hàm xử lý khi nhấn nút Thêm
     def submit_data():
         # Lấy dữ liệu từ các trường nhập liệu
         data = {label: entry.get().strip() for label, entry in entries.items()}
-
         # Kiểm tra đầu vào bắt buộc
         if not data["Name"] or not data["Age"]:
             messagebox.showerror("Lỗi", "Các trường Name và Age không được để trống!")
@@ -36,13 +33,10 @@ def add_data(viewer):
         if data["Name"].isdigit():
             messagebox.showerror("Lỗi", "Name phải là chuỗi kí tự!")
             return
-        
         # Kiểm tra định dạng số cho Age
         if not data["Age"].isdigit():
             messagebox.showerror("Lỗi", "Age phải là một số nguyên dương!")
             return
-        
-
         if int(data["Age"]) > 120:
             messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 120!")
             return
@@ -57,7 +51,6 @@ def add_data(viewer):
             messagebox.showerror("Lỗi", "Room Number phải là một số!")
             return
             
-
         # Thêm dữ liệu vào DataFrame
         try:
             viewer.df = pd.concat(
@@ -118,11 +111,17 @@ def update_data(viewer):
             return
 
         if int(new_data["Age"]) > 120:
-            messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 100!")
+            messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 120!")
             return
             
-        if not new_data["Room Number"].isdigit():
-            messagebox.showerror("Lỗi", "Room Number phải là một số nguyên dương!")
+        room_num = new_data["Room Number"].strip()
+        try:
+            room_num_int = int(room_num)
+            if room_num_int < 0: 
+                messagebox.showerror("Lỗi", "Room Number không được là số âm!")
+                return
+        except:
+            messagebox.showerror("Lỗi", "Room Number phải là một số!")
             return
         
         viewer.load_data(viewer.current_page)

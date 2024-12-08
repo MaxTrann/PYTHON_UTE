@@ -343,21 +343,21 @@ class LargeDatasetViewer:
     def remove_unused_columns(self):
         if self.df is not None:
             removed_col = simpledialog.askstring(
-            "Xóa cột", "Nhập tên các cột cần xóa (cách nhau bằng dấu phẩy):")
+            "Xóa cột", "Nhập tên các cột cần xóa:")
             if removed_col:
-                removed_col = removed_col.strip()  # Loại bỏ khoảng trắng thừa
+                removed_col = removed_col.strip()# bỏ khoảng trắng
                 if removed_col in self.df.columns:
-                    self.df = self.df.drop(columns=[removed_col]) # Xóa cột
-                    self.load_data(self.current_page)  # Cập nhật lại giao diện
+                    self.df = self.df.drop(columns=[removed_col])# Xóa cột
+                    self.load_data(self.current_page) #Cập nhật
                     messagebox.showinfo("Thông báo", f"Đã xóa cột: {removed_col}")
                 else:
-                    messagebox.showwarning("Thông báo", "Cột không tồn tại trong dữ liệu.")
+                    messagebox.showwarning("Thông báo", "Cột không tồn tại.")
             else:
-                messagebox.showinfo("Thông báo", "Không có cột nào được nhập để xóa.")
+                messagebox.showinfo("Thông báo", "Vui lòng nhập cột để xóa.")
         else:
-                    messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
+            messagebox.showerror("Lỗi", "Không có dữ liệu.")
+
     def Delete_Outliers(self):
-        columns = self.df.columns.tolist()
         # Box nhập tên cột
         col_name = simpledialog.askstring("Giá trị ngoại lai", f"Nhập tên cột muốn xử lý:")
         if not col_name or col_name not in self.df.columns:
@@ -374,7 +374,7 @@ class LargeDatasetViewer:
             f"Đã xóa {before_count - after_count} dòng chứa giá trị ngoại lai trong cột {col_name}.")
             self.load_data(self.current_page) # Cập nhật lại dữ liệu
         except Exception as e:
-            messagebox.showerror("Lỗi", f"Không thể xử lý giá trị ngoại lai: {str(e)}")
+            messagebox.showerror("Lỗi", f"Không thể xử lý: {str(e)}")
 
 if __name__ == "__main__":
     root = tk.Tk()

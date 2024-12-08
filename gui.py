@@ -76,7 +76,7 @@ class LargeDatasetViewer:
         cleaning_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Cleaning", menu=cleaning_menu)
         cleaning_menu.add_command(label="Xóa hàng trống", command=self.remove_empty_data_rows)
-        cleaning_menu.add_command(label="Xóa cột trống", command=self.remove_empty_columns)
+        cleaning_menu.add_command(label="Xóa cột không dùng", command=self.remove_unused_columns)
         cleaning_menu.add_command(label="Xóa giá trị ngoại lai", command=self.Delete_Outliers)
         cleaning_menu.add_command(label="Tìm kiếm", command=self.create_search_widget)  # Thêm mục tìm kiếm vào menu Cleaning
         cleaning_menu.add_command(label="Điền dữ liệu còn thiếu", command=lambda: fill_missing_data_prompt(self))
@@ -340,14 +340,22 @@ class LargeDatasetViewer:
         else:
             messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
 
-    def remove_empty_columns(self):
+    def remove_unused_columns(self):
         if self.df is not None:
-            self.df = self.df.dropna(axis=1, how="all")  # Xóa các cột chứa toàn bộ là NaN
-            self.load_data(self.current_page)  # Cập nhật lại dữ liệu
-            messagebox.showinfo("Thông báo", "Đã xóa các cột trống.")
+            removed_col = simpledialog.askstring(
+            "Xóa cột", "Nhập tên các cột cần xóa (cách nhau bằng dấu phẩy):")
+            if removed_col:
+                removed_col = removed_col.strip()  # Loại bỏ khoảng trắng thừa
+                if removed_col in self.df.columns:
+                    self.df = self.df.drop(columns=[removed_col]) # Xóa cột
+                    self.load_data(self.current_page)  # Cập nhật lại giao diện
+                    messagebox.showinfo("Thông báo", f"Đã xóa cột: {removed_col}")
+                else:
+                    messagebox.showwarning("Thông báo", "Cột không tồn tại trong dữ liệu.")
+            else:
+                messagebox.showinfo("Thông báo", "Không có cột nào được nhập để xóa.")
         else:
-            messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
-
+                    messagebox.showerror("Lỗi", "Không có dữ liệu để xử lý.")
     def Delete_Outliers(self):
         columns = self.df.columns.tolist()
         # Box nhập tên cột

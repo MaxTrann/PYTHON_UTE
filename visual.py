@@ -101,7 +101,7 @@ def plot_blood_type(data):
 def plot_stacked_bar_age_insurance(data):
     # Phân loại nhóm tuổi
     bins = [0, 18, 44, 65, 120]
-    labels = ['0-18', '19-34', '45-65', '65+']
+    labels = ['0-18', '19-44', '45-65', '65+']
     data['Age Group'] = pd.cut(data['Age'], bins=bins, labels=labels)
 
     # Gộp nhóm dữ liệu theo Insurance Provider và Age Group

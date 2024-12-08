@@ -111,7 +111,7 @@ def update_data(viewer):
             return
 
         if int(new_data["Age"]) > 120:
-            messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 100!")
+            messagebox.showerror("Lỗi", "Tuổi chỉ từ 0 - 120!")
             return
             
         room_num = new_data["Room Number"].strip()

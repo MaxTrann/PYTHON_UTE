@@ -87,7 +87,7 @@ class LargeDatasetViewer:
         visual_menu.add_command(label="Biểu đồ cột Số lượng bệnh nhân theo ngày nhập viện và tình trạng bệnh", command=lambda: plot_patient_count_by_month_and_condition(self.df))
         visual_menu.add_command(label="Biểu đồ tròn Tỷ lệ bệnh nhân nhập viện theo từng loại", command=lambda: plot_admission_type_pie_chart(self.df))
         visual_menu.add_command(label="Biểu đồ tròn tỷ lệ nhóm máu", command=lambda:plot_blood_type(self.df))
-        visual_menu.add_command(label="Biểu đồ cột chồng thể hiện sự tin dùng các hãng bảo hiểm theo tuổi", command=lambda:plot_stacked_bar_age_insurance(self.df))
+        visual_menu.add_command(label="Biểu đồ cột chồng Thể hiện sự tin dùng các hãng bảo hiểm theo tuổi", command=lambda:plot_stacked_bar_age_insurance(self.df))
         visual_menu.add_command(label="Biểu đồ cột Số lượng bệnh nhân theo giới tính và loại bệnh", command=lambda: plot_gender_distribution(self.df))
         visual_menu.add_command(label="Biểu đồ đường Số lượng người mắc bệnh theo tuổi và loại bệnh", command=lambda: plot_age_medical_condition_distribution(self.df))
         
@@ -353,7 +353,7 @@ class LargeDatasetViewer:
         # Box nhập tên cột
         col_name = simpledialog.askstring("Nhóm ", f"Nhập tên cột muốn xử lý:")
         if not col_name or col_name not in self.df.columns:
-            messagebox.showerror("Lỗi", f"Cột '{col_name}' không tồn tại.")
+            messagebox.showerror("Lỗi", f"Cột '{col_name}' không tồn tại")
             return
 
         # Loại bỏ giá trị ngoại lai
@@ -364,7 +364,7 @@ class LargeDatasetViewer:
             # Kết quả
             messagebox.showinfo("Thông báo", 
             f"Đã xóa {before_count - after_count} dòng chứa giá trị ngoại lai trong cột {col_name}.")
-            self.load_data(self.current_page)
+            self.load_data(self.current_page) # Cập nhật lại dữ liệu
         except Exception as e:
             messagebox.showerror("Lỗi", f"Không thể xử lý giá trị ngoại lai: {str(e)}")
 

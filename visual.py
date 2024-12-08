@@ -94,10 +94,8 @@ def plot_blood_type(data):
 
     # Vẽ biểu đồ tròn
     fig = plt.figure(figsize=(8, 8))
-    ax = fig.add_axes([0, 0, 1, 1])
-    ax.axis('equal')  # Đảm bảo biểu đồ tròn không bị méo
-    ax.pie(sizes, labels=labels, autopct='%1.2f%%', startangle=90, colors=plt.cm.Set3.colors)
-    ax.set_title("Tỷ lệ nhóm máu của bệnh nhân", fontsize=16)
+    plt.pie(sizes, labels=labels, autopct='%1.2f%%')
+    plt.title(label="Blood rate by type")
     plt.show()
 
 def plot_stacked_bar_age_insurance(data):
@@ -124,10 +122,10 @@ def plot_stacked_bar_age_insurance(data):
 
     # Vẽ biểu đồ cột chồng
     grouped_data.plot(kind='bar', stacked=True, figsize=(12, 8), colormap='viridis')
-    plt.title("Phân phối nhóm tuổi theo Insurance Provider", fontsize=16)
-    plt.xlabel("Insurance Provider", fontsize=12)
-    plt.ylabel("Số lượng bệnh nhân", fontsize=12)
-    plt.legend(title="Age Group", fontsize=10, bbox_to_anchor=(1.05, 1))
+    plt.title("Age distribution by Insurance Provider", fontsize=16)
+    plt.xlabel("Insurance Provider", fontsize=10)
+    plt.ylabel("Patient Amount", fontsize=10)
+    plt.legend(title="Age Group", fontsize=8)
     plt.xticks(rotation=45, fontsize=10)
     plt.tight_layout()
     plt.show()
@@ -175,5 +173,3 @@ def plot_age_medical_condition_distribution(data):
     plt.suptitle('SỐ LƯỢNG BỆNH NHÂN THEO ĐỘ TUỔI VÀ LOẠI BỆNH', fontsize=16)
     plt.tight_layout(rect=[0, 0, 1, 0.96])
     plt.show()
-
-

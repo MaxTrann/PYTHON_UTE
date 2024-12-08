@@ -86,8 +86,8 @@ class LargeDatasetViewer:
         menu_bar.add_cascade(label="Visualize", menu=visual_menu)
         visual_menu.add_command(label="Biểu đồ cột Số lượng bệnh nhân theo ngày nhập viện và tình trạng bệnh", command=lambda: plot_patient_count_by_month_and_condition(self.df))
         visual_menu.add_command(label="Biểu đồ tròn Tỷ lệ bệnh nhân nhập viện theo từng loại", command=lambda: plot_admission_type_pie_chart(self.df))
-        visual_menu.add_command(label="Biểu đồ tròn tỷ lệ nhóm máu", command=lambda:plot_blood_type(self.df))
-        visual_menu.add_command(label="Biểu đồ cột chồng Thể hiện sự tin dùng các hãng bảo hiểm theo tuổi", command=lambda:plot_stacked_bar_age_insurance(self.df))
+        visual_menu.add_command(label="Biểu đồ tròn Tỷ lệ nhóm máu của bệnh nhân", command=lambda:plot_blood_type(self.df))
+        visual_menu.add_command(label="Biểu đồ cột chồng Số lượng bệnh nhân tin dùng các hãng bảo hiểm theo nhóm tuổi", command=lambda:plot_stacked_bar_age_insurance(self.df))
         visual_menu.add_command(label="Biểu đồ cột Số lượng bệnh nhân theo giới tính và loại bệnh", command=lambda: plot_gender_distribution(self.df))
         visual_menu.add_command(label="Biểu đồ đường Số lượng người mắc bệnh theo tuổi và loại bệnh", command=lambda: plot_age_medical_condition_distribution(self.df))
         

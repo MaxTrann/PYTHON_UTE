@@ -261,6 +261,9 @@ class LargeDatasetViewer:
         for index, row in self.df.iloc[start:end].iterrows():
             self.tree.insert("", tk.END, values=list(row))
 
+        # Ensure data types are maintained
+        self.df = self.df.convert_dtypes()
+
         # Cập nhật trạng thái trang
         self.update_page_buttons()
 

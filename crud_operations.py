@@ -53,10 +53,15 @@ def add_data(viewer):
             
         # Thêm dữ liệu vào DataFrame
         try:
+            for key in ["Age", "Room Number"]:
+                data[key] = int(data[key])
+            data["Billing Amount"] = float(data["Billing Amount"])
             viewer.df = pd.concat(
                 [viewer.df, pd.DataFrame([data])],
                 ignore_index=True
             )
+            # Ensure data types are maintained
+            viewer.df = viewer.df.convert_dtypes()
             viewer.load_data(viewer.current_page)  # Move this line inside the try block
             input_window.destroy()
             messagebox.showinfo("Thành công", "Thêm dữ liệu thành công!")
@@ -95,10 +100,15 @@ def update_data(viewer):
     # Xử lí
     def submit_update():
         new_data = {label: entry.get().strip() for label, entry in entries.items()}
-        
-        # Cập nhật dữ liệu
+        # Ensure data types are maintained
         for key, value in new_data.items():
-            viewer.df.at[index, key] = value
+            if key in ["Age", "Room Number"]:
+                viewer.df.at[index, key] = int(value)
+            elif key == "Billing Amount":
+                viewer.df.at[index, key] = float(value)
+            else:
+                viewer.df.at[index, key] = value
+        viewer.df = viewer.df.convert_dtypes()
     
 
         # Kiểm tra định dạng số cho Age
